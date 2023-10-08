@@ -1,24 +1,7 @@
 const mongoose = require("mongoose")
 
-const customerSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    role: {
-        type: String,
-        default: "Customer"
-    },
-    cartDetails: [{
+const productSchema = new mongoose.Schema(
+    {
         productName: {
             type: String
         },
@@ -55,7 +38,6 @@ const customerSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'admin'
         },
-    }]
-});
+    }, { timestamps: true });
 
-module.exports = mongoose.model("customer", customerSchema)
+module.exports = mongoose.model("product", productSchema)

@@ -1,41 +1,41 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { productData } from '../components/products';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../redux/userRelated/userSlice';
+import { addToCart } from '../redux/userSlice';
 import styled from 'styled-components';
-import { BasicButton } from '../components/buttonStyles';
+import { BasicButton } from '../utils/buttonStyles';
+import { getProductDetails } from '../redux/userHandle';
 
 const ViewProduct = () => {
     const dispatch = useDispatch();
     const params = useParams();
     const productID = params.id;
 
-    const { currentRole } = useSelector(state => state.user);
+    useEffect(() => {
+        dispatch(getProductDetails(productID));
+    }, [productID, dispatch]);
 
-    const selectedProduct = productData.find(product => product.id === parseInt(productID));
+    const { currentRole, productDetails, responseDetails } = useSelector(state => state.user);
 
-    if (!selectedProduct) {
+    if (!productDetails || responseDetails) {
         return <div>Product not found</div>;
     }
-
-    const { productName, description, price, category, subcategory, productImage } = selectedProduct;
 
     return (
         <>
             <ProductContainer>
-                <ProductImage src={productImage} alt={productName} />
+                <ProductImage src={productDetails && productDetails.productImage} alt={productDetails && productDetails.productName} />
                 <ProductInfo>
-                    <ProductName>{productName}</ProductName>
+                    <ProductName>{productDetails && productDetails.productName}</ProductName>
                     <PriceContainer>
-                        <PriceCost>₹{price.cost}</PriceCost>
-                        <PriceMrp>₹{price.mrp}</PriceMrp>
-                        <PriceDiscount>{price.discountPercent}% off</PriceDiscount>
+                        <PriceCost>₹{productDetails && productDetails.price && productDetails.price.cost}</PriceCost>
+                        <PriceMrp>₹{productDetails && productDetails.price && productDetails.price.mrp}</PriceMrp>
+                        <PriceDiscount>{productDetails && productDetails.price && productDetails.price.discountPercent}% off</PriceDiscount>
                     </PriceContainer>
-                    <Description>{description}</Description>
+                    <Description>{productDetails && productDetails.description}</Description>
                     <ProductDetails>
-                        <p>Category: {category}</p>
-                        <p>Subcategory: {subcategory}</p>
+                        <p>Category: {productDetails && productDetails.category}</p>
+                        <p>Subcategory: {productDetails && productDetails.subcategory}</p>
                     </ProductDetails>
                 </ProductInfo>
             </ProductContainer>
@@ -44,7 +44,7 @@ const ViewProduct = () => {
 
                 <ButtonContainer>
                     <BasicButton
-                        onClick={() => dispatch(addToCart(selectedProduct))}
+                        onClick={() => dispatch(addToCart(productDetails))}
                     >
                         Add to Cart
                     </BasicButton>

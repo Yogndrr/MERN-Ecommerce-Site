@@ -1,22 +1,47 @@
-import React from 'react'
-import { Box, styled } from '@mui/material'
-import { productData } from '../components/products'
+import React, { useEffect } from 'react'
+import { Box, Container, styled } from '@mui/material'
 import Slide from './Slide'
 import Banner from './Banner'
+import { useDispatch, useSelector } from 'react-redux'
+import { getProducts } from '../redux/userHandle'
+import ProductsMenu from './customer/components/ProductsMenu'
 
 const Home = () => {
   const adURL = 'https://rukminim1.flixcart.com/flap/464/708/image/1f03e99f6dc9f7a6.jpg?q=70';
 
-  return (
-    <div>
+  const dispatch = useDispatch()
 
+  const { productData, currentRole } = useSelector(state => state.user);
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch])
+
+  return (
+    <div id="top">
+      <Container sx={{
+        display: 'none',
+        '@media (max-width: 600px)': {
+          display: 'flex',
+        },
+      }}>
+
+        {currentRole === "Customer" &&
+          <ProductsMenu dropName="Categories" />
+        }
+
+        {currentRole === "Customer" &&
+          <ProductsMenu dropName="Products" />
+        }
+
+      </Container>
       <BannerBox>
         <Banner />
       </BannerBox>
 
       <Component>
         <LeftComponent>
-          <Slide products={productData} title='Deals of the Day' timer={true} />
+          <Slide products={productData} title='Top Selection' />
         </LeftComponent>
 
         <RightComponent>
@@ -24,10 +49,10 @@ const Home = () => {
         </RightComponent>
       </Component>
 
-      <Slide products={productData} title='Discounts for You' timer={false} />
-      <Slide products={productData} title='Suggested Items' timer={false} />
-      <Slide products={productData} title='Top Selection' timer={false} />
-      <Slide products={productData} title='Recommended Items' timer={false} />
+      <Slide products={productData} title='Deals of the Day' />
+      <Slide products={productData} title='Suggested Items' />
+      <Slide products={productData} title='Discounts for You' />
+      <Slide products={productData} title='Recommended Items' />
     </div>
   )
 }

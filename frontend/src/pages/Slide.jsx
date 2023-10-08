@@ -4,30 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
 
-import Countdown from 'react-countdown';
-
-const Slide = ({ products, timer, title }) => {
+const Slide = ({ products, title }) => {
     const navigate = useNavigate()
-
-    const timerURL = 'https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/timer_a73398.svg';
-
-    const renderer = ({ hours, minutes, seconds }) => {
-        return <RenderTimer variant="span">
-            {hours} : {minutes} : {seconds}  Left
-        </RenderTimer>;
-    };
 
     return (
         <Component>
             <Deal>
                 <DealText>{title}</DealText>
-                {
-                    timer &&
-                    <Timer>
-                        <img src={timerURL} style={{ width: 24 }} alt='time clock' />
-                        <Countdown date={Date.now() + 5.04e+7} renderer={renderer} />
-                    </Timer>
-                }
+
                 <ViewAllButton
                     variant="contained"
                     onClick={() => { navigate("/Products") }}
@@ -53,7 +37,7 @@ const Slide = ({ products, timer, title }) => {
                 itemClass="carousel-item-padding-40-px">
                 {
                     products.map((product, index) => (
-                        <Link key={index} to={`/product/view/${product.id}`} style={{ textDecoration: 'none' }}>
+                        <Link key={index} to={`/product/view/${product._id}`} style={{ textDecoration: 'none' }}>
                             <Box textAlign="center" style={{ padding: '25px 15px' }}>
                                 <Image src={product.productImage} />
                                 <Text style={{ fontWeight: 600, color: '#212121' }}>{product.productName}</Text>
@@ -106,13 +90,6 @@ const DealText = styled(Typography)`
     margin-right: 25px;
 `
 
-const Timer = styled(Box)`
-    color: #7f7f7f;
-    margin-left: 10px;
-    display: flex;
-    align-items: center;
-`;
-
 const ViewAllButton = styled(Button)`
     margin-left: auto;
     background-color: #4d1c9c;
@@ -140,9 +117,3 @@ const TextContainer = styled(Container)`
     align-items: center;
     margin: 8px;
 `;
-
-const RenderTimer = styled(Box)(({ theme }) => ({
-    [theme.breakpoints.down('sm')]: {
-        display: 'none'
-    }
-}));

@@ -6,6 +6,15 @@ const {
 } = require('../controllers/adminController.js');
 
 const {
+    productCreate,
+    getProducts,
+    getProductDetail,
+    searchProduct,
+    searchProductbyCategory,
+    searchProductbySubCategory,
+} = require('../controllers/productController.js');
+
+const {
     customerRegister,
     customerLogIn,
     getCustomerDetail,
@@ -18,6 +27,14 @@ const {
 // Admin
 router.post('/AdminRegister', adminRegister);
 router.post('/AdminLogin', adminLogIn);
+
+// Product
+router.post('/ProductCreate', productCreate);
+router.get('/getProducts', getProducts);
+router.get('/getProductDetail/:id', getProductDetail);
+router.get('/searchProduct/:key', searchProduct);
+router.get('/searchProductbyCategory/:key', searchProductbyCategory);
+router.get('/searchProductbySubCategory/:key', searchProductbySubCategory);
 
 // Customer
 router.post('/CustomerRegister', customerRegister);

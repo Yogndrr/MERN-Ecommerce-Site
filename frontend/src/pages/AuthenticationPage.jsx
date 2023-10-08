@@ -6,8 +6,8 @@ import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, Cs
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import bgpic from "../assets/designlogin.jpg"
-import { LightPurpleButton } from '../components/buttonStyles';
-import { authUser } from '../redux/userRelated/userHandle';
+import { LightPurpleButton } from '../utils/buttonStyles';
+import { authUser } from '../redux/userHandle';
 import styled from 'styled-components';
 import Popup from '../components/Popup';
 

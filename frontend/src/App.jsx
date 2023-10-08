@@ -1,26 +1,34 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Home from './pages/Home'
 import ViewProduct from './pages/ViewProduct'
 import ChooseUser from './pages/ChooseUser'
-import Profile from './pages/Profile'
-import Navbar from './components/Navbar'
+import Profile from './components/Profile'
+import Navbar from './pages/Navbar'
 import AuthenticationPage from './pages/AuthenticationPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
-import CustomerSearch from './pages/customer/CustomerSearch'
-import Logout from './pages/Logout';
-import Products from './pages/Products';
-import { productData } from './components/products';
+import CustomerSearch from './pages/customer/pages/CustomerSearch'
+import Logout from './components/Logout';
+import Products from './components/Products';
+import { useEffect } from 'react';
+import { getProducts } from './redux/userHandle';
 
 const App = () => {
-  const { currentRole } = useSelector(state => state.user);
+
+  const dispatch = useDispatch()
+
+  const { currentRole, productData } = useSelector(state => state.user);
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch])
 
   return (
     <BrowserRouter>
       {currentRole === null &&
         <>
           <Navbar />
-          
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Home" element={<Home />} />
@@ -39,11 +47,11 @@ const App = () => {
         </>
       }
 
-      {currentRole === "Admin" &&
+      {(currentRole === "Admin" || currentRole === "Shopcart") && (
         <>
           <AdminDashboard />
         </>
-      }
+      )}
 
       {currentRole === "Customer" &&
         <>

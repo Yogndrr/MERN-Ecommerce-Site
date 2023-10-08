@@ -11,24 +11,30 @@ import {
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { AppBar, Drawer } from '../../components/styles';
+import { AppBar, Drawer, NavLogo } from '../../utils/styles';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-import Logout from '../Logout';
-import SideBar from './SideBar';
-import AdminProfile from './AdminProfile';
-import AdminHomePage from './AdminHomePage';
+import Logout from '../../components/Logout';
+import SideBar from './components/SideBar';
+import AdminProfile from './pages/AdminProfile';
+import AdminHomePage from './pages/AdminHomePage';
 
-import AccountMenu from '../../components/AccountMenu';
-import ShowProducts from './ShowProducts';
-import ShowMessages from './ShowMessages';
-import ViewProductAdmin from './ViewProductAdmin';
-import AddProduct from './AddProduct';
+import AccountMenu from './components/AccountMenu';
+import ShowProducts from './pages/ShowProducts';
+import ShowMessages from './pages/ShowMessages';
+import ViewProductAdmin from './pages/ViewProductAdmin';
+import AddProduct from './pages/AddProduct';
+import { useSelector } from 'react-redux';
+import Products from '../../components/Products';
+import { productData } from '../../utils/products';
+import ShopcartSpecial from './pages/ShopcartSpecial';
 
 const AdminDashboard = () => {
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
     };
+
+    const { currentRole } = useSelector(state => state.user);
 
     const navigate = useNavigate()
 
@@ -56,7 +62,6 @@ const AdminDashboard = () => {
                         </IconButton>
 
                         {/* Desktop */}
-
                         <Typography
                             component="h1"
                             variant="h6"
@@ -71,13 +76,22 @@ const AdminDashboard = () => {
                                 letterSpacing: '.3rem',
                                 color: 'inherit',
                                 textDecoration: 'none',
-                                cursor:"pointer"
+                                cursor: "pointer"
                             }}
-                            onClick={homeHandler}
                         >
-                            <LocalMallIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                            <NavLogo
+                                to="top"
+                                activeClass="active"
+                                spy={true}
+                                smooth={true}
+                                offset={-70}
+                                duration={500}
+                                onClick={homeHandler}
+                            >
+                                <LocalMallIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
 
-                            SHOPCART
+                                SHOPCART
+                            </NavLogo>
                         </Typography>
 
                         {/* Mobile */}
@@ -95,11 +109,20 @@ const AdminDashboard = () => {
                                 color: 'inherit',
                                 textDecoration: 'none',
                             }}
-                            onClick={homeHandler}
                         >
-                            <LocalMallIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                            <NavLogo
+                                to="top"
+                                activeClass="active"
+                                spy={true}
+                                smooth={true}
+                                offset={-70}
+                                duration={500}
+                                onClick={homeHandler}
+                            >
+                                <LocalMallIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
 
-                            SHOPCART
+                                SHOPCART
+                            </NavLogo>
                         </Typography>
 
                         <AccountMenu />
@@ -129,12 +152,20 @@ const AdminDashboard = () => {
                         <Route path="/Admin/products" element={<ShowProducts />} />
                         <Route path="/Admin/products/product/:id" element={<ViewProductAdmin />} />
 
+                        {
+                            currentRole === "Shopcart" &&
+                            <>
+                                <Route path="/Admin/shopcart" element={<ShopcartSpecial />} />
+                                <Route path="/Admin/uploadproducts" element={<Products productData={productData} />} />
+                            </>
+                        }
+
                         <Route path="/Admin/messages" element={<ShowMessages />} />
 
                         <Route path="/logout" element={<Logout />} />
                     </Routes>
                 </Box>
-            </Box>
+            </Box >
         </>
     );
 }

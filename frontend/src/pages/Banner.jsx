@@ -1,7 +1,7 @@
 import { styled } from '@mui/material';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { bannerData } from '../components/products';
+import { bannerData } from '../utils/products';
 
 const Banner = () => {
     return (
@@ -21,7 +21,7 @@ const Banner = () => {
             itemClass="carousel-item-padding-40-px"
         >
             {bannerData.map((image) => (
-                <Image src={image.url} alt={image.alt} key={image.id} />
+                <Image src={image.url} alt={image.alt} key={image._id} />
             ))}
         </Carousel>
     );

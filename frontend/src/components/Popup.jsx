@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { underControl } from '../redux/userRelated/userSlice';
+import { underControl } from '../redux/userSlice';
 import MuiAlert from '@mui/material/Alert';
 import { Snackbar } from '@mui/material';
 
