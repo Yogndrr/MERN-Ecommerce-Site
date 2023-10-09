@@ -20,7 +20,7 @@ import AdminHomePage from './pages/AdminHomePage';
 
 import AccountMenu from './components/AccountMenu';
 import ShowProducts from './pages/ShowProducts';
-import ShowMessages from './pages/ShowMessages';
+import ShowOrders from './pages/ShowOrders';
 import ViewProductAdmin from './pages/ViewProductAdmin';
 import AddProduct from './pages/AddProduct';
 import { useSelector } from 'react-redux';
@@ -160,7 +160,7 @@ const AdminDashboard = () => {
                             </>
                         }
 
-                        <Route path="/Admin/messages" element={<ShowMessages />} />
+                        <Route path="/Admin/orders" element={<ShowOrders />} />
 
                         <Route path="/logout" element={<Logout />} />
                     </Routes>

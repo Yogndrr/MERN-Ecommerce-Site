@@ -12,6 +12,8 @@ const {
     searchProduct,
     searchProductbyCategory,
     searchProductbySubCategory,
+    getAdminProducts,
+    updateProduct,
 } = require('../controllers/productController.js');
 
 const {
@@ -30,8 +32,10 @@ router.post('/AdminLogin', adminLogIn);
 
 // Product
 router.post('/ProductCreate', productCreate);
+router.get('/getAdminProducts/:id', getAdminProducts);
 router.get('/getProducts', getProducts);
 router.get('/getProductDetail/:id', getProductDetail);
+router.put('/ProductUpdate/:id', updateProduct);
 router.get('/searchProduct/:key', searchProduct);
 router.get('/searchProductbyCategory/:key', searchProductbyCategory);
 router.get('/searchProductbySubCategory/:key', searchProductbySubCategory);

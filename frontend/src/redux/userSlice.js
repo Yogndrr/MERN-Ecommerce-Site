@@ -9,11 +9,13 @@ const initialState = {
     error: null,
     response: null,
     responseProducts: null,
+    responseAdminProducts: null,
     responseDetails: null,
     responseSearch: null,
     pages: ["Login/Register"],
     filteredProducts: [],
     productData: [],
+    adminProductData: [],
     productDetails: {},
 };
 
@@ -36,6 +38,11 @@ const userSlice = createSlice({
         },
         stuffAdded: (state) => {
             state.status = 'added';
+            state.response = null;
+            state.error = null;
+        },
+        stuffUpdated: (state) => {
+            state.status = 'updated';
             state.response = null;
             state.error = null;
         },
@@ -134,6 +141,12 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
+        adminProductSuccess: (state, action) => {
+            state.adminProductData = action.payload;
+            state.responseAdminProducts = null;
+            state.loading = false;
+            state.error = null;
+        },
         productDetailsSuccess: (state, action) => {
             state.productDetails = action.payload;
             state.responseDetails = null;
@@ -142,6 +155,11 @@ const userSlice = createSlice({
         },
         getProductsFailed: (state, action) => {
             state.responseProducts = action.payload;
+            state.loading = false;
+            state.error = null;
+        },
+        getAdminProductsFailed: (state, action) => {
+            state.responseAdminProducts = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -180,6 +198,7 @@ export const {
     authRequest,
     underControl,
     stuffAdded,
+    stuffUpdated,
     authSuccess,
     authFailed,
     authError,
@@ -188,8 +207,10 @@ export const {
     getDeleteSuccess,
     getRequest,
     productSuccess,
+    adminProductSuccess,
     productDetailsSuccess,
     getProductsFailed,
+    getAdminProductsFailed,
     getProductDetailsFailed,
     getFailed,
     getError,

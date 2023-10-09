@@ -6,7 +6,7 @@ import WidgetsIcon from '@mui/icons-material/Widgets';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ChatIcon from '@mui/icons-material/Chat';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useSelector } from 'react-redux';
 
@@ -39,13 +39,13 @@ const SideBar = () => {
                     <ListItemText primary="Products" />
                 </ListItemButton>
                 <ListItemButton
-                    component={Link} to="/Admin/messages"
-                    sx={location.pathname.startsWith('/Admin/messages') ? styles.currentStyle : styles.normalStyle}
+                    component={Link} to="/Admin/orders"
+                    sx={location.pathname.startsWith('/Admin/orders') ? styles.currentStyle : styles.normalStyle}
                 >
                     <ListItemIcon>
-                        <ChatIcon sx={{ color: location.pathname.startsWith("/Admin/messages") ? '#4d1c9c' : 'inherit' }} />
+                        <PendingActionsIcon sx={{ color: location.pathname.startsWith("/Admin/orders") ? '#4d1c9c' : 'inherit' }} />
                     </ListItemIcon>
-                    <ListItemText primary="Messages" />
+                    <ListItemText primary="Orders" />
                 </ListItemButton>
                 {
                     currentRole === "Shopcart" &&

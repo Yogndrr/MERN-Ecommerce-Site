@@ -25,6 +25,19 @@ const getProducts = async (req, res) => {
     }
 };
 
+const getAdminProducts = async (req, res) => {
+    try {
+        let products = await Product.find({ seller: req.params.id })
+        if (products.length > 0) {
+            res.send(products)
+        } else {
+            res.send({ message: "No products found" });
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
+
 const getProductDetail = async (req, res) => {
     try {
         let product = await Product.findById(req.params.id).populate("seller", "shopName");
@@ -36,6 +49,19 @@ const getProductDetail = async (req, res) => {
         }
     } catch (err) {
         res.status(500).json(err);
+    }
+}
+
+
+const updateProduct = async (req, res) => {
+    try {
+        let result = await Product.findByIdAndUpdate(req.params.id,
+            { $set: req.body },
+            { new: true })
+
+        res.send(result)
+    } catch (error) {
+        res.status(500).json(error);
     }
 }
 
@@ -104,7 +130,9 @@ const searchProductbySubCategory = async (req, res) => {
 module.exports = {
     productCreate,
     getProducts,
+    getAdminProducts,
     getProductDetail,
+    updateProduct,
     searchProduct,
     searchProductbyCategory,
     searchProductbySubCategory,

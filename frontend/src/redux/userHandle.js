@@ -16,6 +16,9 @@ import {
     getProductsFailed,
     setFilteredProducts,
     getSearchFailed,
+    adminProductSuccess,
+    getAdminProductsFailed,
+    stuffUpdated,
 } from './userSlice';
 
 export const authUser = (fields, role, mode) => async (dispatch) => {
@@ -107,6 +110,24 @@ export const updateCustomer = (fields, id, address) => async (dispatch) => {
             headers: { 'Content-Type': 'application/json' },
         });
 
+        dispatch(stuffUpdated());
+
+    } catch (error) {
+        dispatch(getError(error));
+    }
+}
+
+export const getProductsbyAdmin = (id) => async (dispatch) => {
+    dispatch(getRequest());
+
+    try {
+        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getAdminProducts/${id}`);
+        if (result.data.message) {
+            dispatch(getAdminProductsFailed(result.data));
+        }
+        else {
+            dispatch(adminProductSuccess(result.data));
+        }
     } catch (error) {
         dispatch(getError(error));
     }
