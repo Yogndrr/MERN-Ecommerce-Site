@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { BasicButton, BrownButton, DarkRedButton, IndigoButton } from '../../../utils/buttonStyles';
 import { useNavigate } from 'react-router-dom';
-import { getProductsbyAdmin } from '../../../redux/userHandle';
+import { deleteStuff, getProductsbyAdmin } from '../../../redux/userHandle';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate.jsx';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,9 +17,18 @@ const ShowProducts = () => {
 
   const { currentUser, currentRole, loading, adminProductData, responseAdminProducts } = useSelector(state => state.user);
 
+  const adminID = currentUser._id
+
   useEffect(() => {
     dispatch(getProductsbyAdmin(currentUser._id));
   }, [dispatch, currentUser._id])
+
+  const deleteHandler = (deleteID, address) => {
+    dispatch(deleteStuff(deleteID, address))
+      .then(() => {
+        dispatch(getProductsbyAdmin(currentUser._id));
+      })
+  }
 
   const actions = [
     {
@@ -28,7 +37,7 @@ const ShowProducts = () => {
     },
     {
       icon: <DeleteIcon color="error" />, name: 'Delete All Products',
-      action: () => console.log("Deleted")
+      action: () => deleteHandler(adminID, "DeleteProducts")
     },
   ];
 
@@ -43,7 +52,7 @@ const ShowProducts = () => {
     },
     {
       icon: <DeleteIcon color="error" />, name: 'Delete All Products',
-      action: () => console.log("Deleted")
+      action: () => deleteHandler(adminID, "DeleteProducts")
     },
   ];
 
@@ -83,7 +92,7 @@ const ShowProducts = () => {
                           <PriceDiscount>{data.price.discountPercent}% off</PriceDiscount>
                           <ButtonContainer>
                             <DarkRedButton
-                              onClick={() => console.log("Deleted")}
+                              onClick={() => deleteHandler(data._id, "DeleteProduct")}
                             >
                               Delete
                             </DarkRedButton>

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/userSlice';
 import styled from 'styled-components';
 import { BasicButton } from '../utils/buttonStyles';
-import { getProductDetails } from '../redux/userHandle';
+import { getProductDetails, updateStuff } from '../redux/userHandle';
+import { Box, Rating, TextField, Typography } from '@mui/material';
 
 const ViewProduct = () => {
     const dispatch = useDispatch();
@@ -15,40 +16,93 @@ const ViewProduct = () => {
         dispatch(getProductDetails(productID));
     }, [productID, dispatch]);
 
-    const { currentRole, productDetails, responseDetails } = useSelector(state => state.user);
+    const { currentUser, currentRole, productDetails, loading, responseDetails } = useSelector(state => state.user);
 
-    if (!productDetails || responseDetails) {
-        return <div>Product not found</div>;
-    }
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+
+    const handleRatingChange = (event, newRating) => {
+        setRating(newRating);
+    };
+
+    const reviewer = currentUser._id
+
+    const fields = { rating, comment, reviewer }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        dispatch(updateStuff(fields, currentUser._id, "ProductUpdate"));
+        setRating(0);
+        setComment('');
+    };
 
     return (
         <>
-            <ProductContainer>
-                <ProductImage src={productDetails && productDetails.productImage} alt={productDetails && productDetails.productName} />
-                <ProductInfo>
-                    <ProductName>{productDetails && productDetails.productName}</ProductName>
-                    <PriceContainer>
-                        <PriceCost>₹{productDetails && productDetails.price && productDetails.price.cost}</PriceCost>
-                        <PriceMrp>₹{productDetails && productDetails.price && productDetails.price.mrp}</PriceMrp>
-                        <PriceDiscount>{productDetails && productDetails.price && productDetails.price.discountPercent}% off</PriceDiscount>
-                    </PriceContainer>
-                    <Description>{productDetails && productDetails.description}</Description>
-                    <ProductDetails>
-                        <p>Category: {productDetails && productDetails.category}</p>
-                        <p>Subcategory: {productDetails && productDetails.subcategory}</p>
-                    </ProductDetails>
-                </ProductInfo>
-            </ProductContainer>
-            {
-                currentRole === "Customer" &&
+            {loading ?
+                <div>Loading...</div>
+                :
+                <>
+                    {
+                        responseDetails ?
+                            <div>Product not found</div>
+                            :
+                            <>
+                                <ProductContainer>
+                                    <ProductImage src={productDetails && productDetails.productImage} alt={productDetails && productDetails.productName} />
+                                    <ProductInfo>
+                                        <ProductName>{productDetails && productDetails.productName}</ProductName>
+                                        <PriceContainer>
+                                            <PriceCost>₹{productDetails && productDetails.price && productDetails.price.cost}</PriceCost>
+                                            <PriceMrp>₹{productDetails && productDetails.price && productDetails.price.mrp}</PriceMrp>
+                                            <PriceDiscount>{productDetails && productDetails.price && productDetails.price.discountPercent}% off</PriceDiscount>
+                                        </PriceContainer>
+                                        <Description>{productDetails && productDetails.description}</Description>
+                                        <ProductDetails>
+                                            <p>Category: {productDetails && productDetails.category}</p>
+                                            <p>Subcategory: {productDetails && productDetails.subcategory}</p>
+                                        </ProductDetails>
+                                    </ProductInfo>
+                                </ProductContainer>
+                                {
+                                    currentRole === "Customer" &&
 
-                <ButtonContainer>
-                    <BasicButton
-                        onClick={() => dispatch(addToCart(productDetails))}
-                    >
-                        Add to Cart
-                    </BasicButton>
-                </ButtonContainer>
+                                    <ButtonContainer>
+                                        <BasicButton
+                                            onClick={() => dispatch(addToCart(productDetails))}
+                                        >
+                                            Add to Cart
+                                        </BasicButton>
+                                    </ButtonContainer>
+                                }
+
+                                <form onSubmit={handleSubmit}>
+                                    <Typography variant="h6">Write a Review</Typography>
+                                    <Box mb={2}>
+                                        <Rating
+                                            name="rating"
+                                            value={rating}
+                                            onChange={handleRatingChange}
+                                        />
+                                    </Box>
+                                    <TextField
+                                        label="Comment"
+                                        variant="outlined"
+                                        multiline
+                                        rows={4}
+                                        fullWidth
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        required
+                                    />
+                                    <Box mt={2}>
+                                        <BasicButton type="submit">
+                                            Submit Review
+                                        </BasicButton>
+                                    </Box>
+                                </form>
+                            </>
+                    }
+                </>
             }
         </>
     );

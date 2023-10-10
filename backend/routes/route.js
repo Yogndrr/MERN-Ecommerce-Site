@@ -14,16 +14,16 @@ const {
     searchProductbySubCategory,
     getAdminProducts,
     updateProduct,
+    deleteProduct,
+    deleteProducts,
 } = require('../controllers/productController.js');
 
 const {
     customerRegister,
     customerLogIn,
     getCustomerDetail,
-    addToCart,
-    removeFromCart,
-    removeAllFromCart,
-    getCartDetail
+    getCartDetail,
+    cartUpdate
 } = require('../controllers/customerController.js');
 
 // Admin
@@ -39,14 +39,14 @@ router.put('/ProductUpdate/:id', updateProduct);
 router.get('/searchProduct/:key', searchProduct);
 router.get('/searchProductbyCategory/:key', searchProductbyCategory);
 router.get('/searchProductbySubCategory/:key', searchProductbySubCategory);
+router.delete('/DeleteProduct/:id', deleteProduct);
+router.delete('/DeleteProducts/:id', deleteProducts);
 
 // Customer
 router.post('/CustomerRegister', customerRegister);
 router.post('/CustomerLogin', customerLogIn);
 router.get('/getCustomerDetail/:id', getCustomerDetail);
 router.get('/getCartDetail/:id', getCartDetail);
-router.put('/addToCart/:id', addToCart);
-router.put('/removeFromCart/:id', removeFromCart);
-router.delete('/removeAllFromCart/:id', removeAllFromCart);
+router.put('/cartUpdate/:id', cartUpdate);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const Product = require("../models/productSchema");
+const Customer = require("../models/customerSchema");
 
 const productCreate = async (req, res) => {
     try {
@@ -127,6 +128,45 @@ const searchProductbySubCategory = async (req, res) => {
     }
 };
 
+const deleteProduct = async (req, res) => {
+    try {
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+
+        await Customer.updateMany(
+            { "cartDetails._id": deletedProduct._id },
+            { $pull: { cartDetails: { _id: deletedProduct._id } } }
+        );
+
+        res.send(deletedProduct);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+const deleteProducts = async (req, res) => {
+    try {
+        const deletionResult = await Product.deleteMany({ seller: req.params.id });
+
+        const deletedCount = deletionResult.deletedCount || 0;
+
+        if (deletedCount === 0) {
+            res.send({ message: "No products found to delete" });
+            return;
+        }
+
+        const deletedProducts = await Product.find({ seller: req.params.id });
+
+        await Customer.updateMany(
+            { "cartDetails._id": { $in: deletedProducts.map(product => product._id) } },
+            { $pull: { cartDetails: { _id: { $in: deletedProducts.map(product => product._id) } } } }
+        );
+
+        res.send(deletionResult);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 module.exports = {
     productCreate,
     getProducts,
@@ -136,4 +176,6 @@ module.exports = {
     searchProduct,
     searchProductbyCategory,
     searchProductbySubCategory,
+    deleteProduct,
+    deleteProducts,
 };

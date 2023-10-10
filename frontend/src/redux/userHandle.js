@@ -52,7 +52,7 @@ export const getUserDetails = (id, address) => async (dispatch) => {
     }
 }
 
-export const deleteUser = (id, address) => async (dispatch) => {
+export const deleteStuff = (id, address) => async (dispatch) => {
     dispatch(getRequest());
 
     try {
@@ -104,6 +104,20 @@ export const addStuff = (address, fields) => async (dispatch) => {
 };
 
 export const updateCustomer = (fields, id, address) => async (dispatch) => {
+
+    try {
+        await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        dispatch(stuffUpdated());
+
+    } catch (error) {
+        dispatch(getError(error));
+    }
+}
+
+export const updateStuff = (fields, id, address) => async (dispatch) => {
 
     try {
         await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {

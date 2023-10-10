@@ -76,7 +76,7 @@ const getCartDetail = async (req, res) => {
     }
 }
 
-const addToCart = async (req, res) => {
+const cartUpdate = async (req, res) => {
     try {
 
         let customer = await Customer.findByIdAndUpdate(req.params.id, req.body,
@@ -89,78 +89,10 @@ const addToCart = async (req, res) => {
     }
 }
 
-// const addToCart = async (req, res) => {
-//     try {
-//         let customer = await Customer.findById(req.params.id)
-
-//         const existingProduct = customer.cartDetails.find(
-//             (cardItem) => cardItem.id === req.body.id
-//         );
-
-//         if (existingProduct) {
-//             existingProduct.quantity += 1;
-//         } else {
-//             customer.cartDetails.push({ ...req.body, quantity: 1 });
-//         }
-
-//         const result = await customer.save();
-//         console.log(result.cartDetails);
-//         return res.send(result.cartDetails);
-
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// }
-
-const removeFromCart = async (req, res) => {
-    try {
-        let customer = await Customer.findById(req.params.id)
-
-        const existingProduct = customer.cartDetails.find(
-            (cardItem) => cardItem.id === req.body.id
-        );
-
-        if (existingProduct) {
-            if (existingProduct.quantity > 1) {
-                existingProduct.quantity -= 1;
-            } else {
-                const index = customer.cartDetails.findIndex(
-                    (cardItem) => cardItem.id === req.body.id
-                );
-                if (index !== -1) {
-                    customer.cartDetails.splice(index, 1);
-                }
-            }
-        }
-        const result = await customer.save();
-        return res.send(result.cartDetails);
-
-    } catch (err) {
-        res.status(500).json(err);
-    }
-}
-
-const removeAllFromCart = async (req, res) => {
-    const customerId = req.params.id;
-
-    try {
-        const result = await Customer.updateOne(
-            { _id: customerId },
-            { $set: { cartDetails: [] } }
-        );
-
-        return res.send(result.cartDetails);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-}
-
 module.exports = {
     customerRegister,
     customerLogIn,
     getCustomerDetail,
     getCartDetail,
-    addToCart,
-    removeFromCart,
-    removeAllFromCart
+    cartUpdate,
 };

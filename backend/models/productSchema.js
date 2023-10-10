@@ -34,6 +34,20 @@ const productSchema = new mongoose.Schema(
         quantity: {
             type: Number
         },
+        reviews: [
+            {
+                rating: {
+                    type: Number,
+                },
+                comment: {
+                    type: String,
+                },
+                reviewer: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "customer",
+                },
+            },
+        ],
         seller: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'admin'
