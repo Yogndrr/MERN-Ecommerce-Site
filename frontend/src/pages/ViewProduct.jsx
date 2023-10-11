@@ -3,38 +3,55 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/userSlice';
 import styled from 'styled-components';
-import { BasicButton } from '../utils/buttonStyles';
+import { BasicButton, GreenButton } from '../utils/buttonStyles';
 import { getProductDetails, updateStuff } from '../redux/userHandle';
-import { Box, Rating, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Card, Rating, TextField, Typography } from '@mui/material';
+import Popup from '../components/Popup';
+import { timeAgo } from '../utils/dateHelper';
 
 const ViewProduct = () => {
     const dispatch = useDispatch();
     const params = useParams();
     const productID = params.id;
 
+
+    const { currentUser, currentRole, productDetails, loading, status, error, responseDetails } = useSelector(state => state.user);
+
     useEffect(() => {
         dispatch(getProductDetails(productID));
     }, [productID, dispatch]);
 
-    const { currentUser, currentRole, productDetails, loading, responseDetails } = useSelector(state => state.user);
-
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+
+    const [message, setMessage] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
 
     const handleRatingChange = (event, newRating) => {
         setRating(newRating);
     };
 
-    const reviewer = currentUser._id
+    const reviewer = currentUser && currentUser._id
 
     const fields = { rating, comment, reviewer }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        dispatch(updateStuff(fields, currentUser._id, "ProductUpdate"));
+        console.log(fields);
+        dispatch(updateStuff(fields, productID, "ProductUpdate"));
         setRating(0);
         setComment('');
     };
+
+
+    useEffect(() => {
+        if (status === "updated") {
+            dispatch(getProductDetails(productID));
+        } else if (error) {
+            setMessage("Network Error");
+            setShowPopup(true);
+        }
+    }, [dispatch, productID, status, error]);
 
     return (
         <>
@@ -63,47 +80,80 @@ const ViewProduct = () => {
                                         </ProductDetails>
                                     </ProductInfo>
                                 </ProductContainer>
+
                                 {
                                     currentRole === "Customer" &&
+                                    <>
+                                        <ButtonContainer>
+                                            <BasicButton
+                                                onClick={() => dispatch(addToCart(productDetails))}
+                                            >
+                                                Add to Cart
+                                            </BasicButton>
+                                        </ButtonContainer>
 
-                                    <ButtonContainer>
-                                        <BasicButton
-                                            onClick={() => dispatch(addToCart(productDetails))}
-                                        >
-                                            Add to Cart
-                                        </BasicButton>
-                                    </ButtonContainer>
+                                        <form onSubmit={handleSubmit}>
+                                            <ReviewWritingContainer>
+                                                <Box>
+                                                    <Rating
+                                                        name="rating"
+                                                        value={rating}
+                                                        onChange={handleRatingChange}
+                                                        size="large"
+                                                    />
+                                                </Box>
+                                                <TextField
+                                                    label="Write a Review"
+                                                    variant="standard"
+                                                    multiline
+                                                    value={comment}
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    sx={{ width: "90%" }}
+                                                    required
+                                                />
+                                                <Box sx={{ textAlign: 'right', width: '90%' }}>
+                                                    {/* Move the Submit button to the right side */}
+                                                    <GreenButton type="submit">
+                                                        Submit
+                                                    </GreenButton>
+                                                </Box>
+                                            </ReviewWritingContainer>
+                                        </form>
+
+                                        <Typography variant="h4">Reviews</Typography>
+
+                                        {productDetails.reviews && productDetails.reviews.length > 0 && (
+                                            <ReviewContainer>
+                                                {productDetails.reviews.map((review, index) => (
+                                                    <ReviewCard key={index}>
+                                                        <ReviewCardDivision>
+                                                            <Avatar sx={{ width: "60px", height: "60px", marginRight: "1rem", backgroundColor: "#8970dc" }}>
+                                                                {String(review.reviewer.name).charAt(0)}
+                                                            </Avatar>
+                                                            <ReviewDetails>
+                                                                <Typography variant="h6">{review.reviewer.name}</Typography>
+                                                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                                            
+                                                                   <Typography variant="body2">
+                                                                        {timeAgo(review.date)}
+                                                                    </Typography>
+                                                                </div>
+                                                                <Typography variant="subtitle1">Rating: {review.rating}</Typography>
+                                                                <Typography variant="body1">{review.comment}</Typography>
+                                                            </ReviewDetails>
+                                                        </ReviewCardDivision>
+                                                    </ReviewCard>
+                                                ))}
+                                            </ReviewContainer>
+                                        )}
+                                    </>
                                 }
 
-                                <form onSubmit={handleSubmit}>
-                                    <Typography variant="h6">Write a Review</Typography>
-                                    <Box mb={2}>
-                                        <Rating
-                                            name="rating"
-                                            value={rating}
-                                            onChange={handleRatingChange}
-                                        />
-                                    </Box>
-                                    <TextField
-                                        label="Comment"
-                                        variant="outlined"
-                                        multiline
-                                        rows={4}
-                                        fullWidth
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                        required
-                                    />
-                                    <Box mt={2}>
-                                        <BasicButton type="submit">
-                                            Submit Review
-                                        </BasicButton>
-                                    </Box>
-                                </form>
                             </>
                     }
                 </>
             }
+            <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
         </>
     );
 };
@@ -170,4 +220,37 @@ const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+const ReviewWritingContainer = styled.div`
+    margin: 6rem;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+`;
+
+const ReviewContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+`;
+
+const ReviewCard = styled(Card)`
+  && {
+    background-color: white;
+    margin-bottom: 2rem;
+    padding: 1rem;
+  }
+`;
+
+const ReviewCardDivision = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const ReviewDetails = styled.div`
+  flex: 1;
 `;

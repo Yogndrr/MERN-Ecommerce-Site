@@ -11,7 +11,7 @@ const Home = () => {
 
   const dispatch = useDispatch()
 
-  const { productData, currentRole } = useSelector(state => state.user);
+  const { productData, responseProducts, error, currentRole } = useSelector(state => state.user);
 
   useEffect(() => {
     dispatch(getProducts());
@@ -39,20 +39,37 @@ const Home = () => {
         <Banner />
       </BannerBox>
 
-      <Component>
-        <LeftComponent>
-          <Slide products={productData} title='Top Selection' />
-        </LeftComponent>
+      {error ?
+        <Container>
+          Loading...
+        </Container>
+        :
+        <>
+          {responseProducts ?
+            <Container>
+              No products found right now
+            </Container>
+            :
+            <>
+              <Component>
+                <LeftComponent>
+                  <Slide products={productData} title='Top Selection' />
+                </LeftComponent>
 
-        <RightComponent>
-          <img src={adURL} alt="" style={{ width: 217 }} />
-        </RightComponent>
-      </Component>
+                <RightComponent>
+                  <img src={adURL} alt="" style={{ width: 217 }} />
+                </RightComponent>
+              </Component>
 
-      <Slide products={productData} title='Deals of the Day' />
-      <Slide products={productData} title='Suggested Items' />
-      <Slide products={productData} title='Discounts for You' />
-      <Slide products={productData} title='Recommended Items' />
+              <Slide products={productData} title='Deals of the Day' />
+              <Slide products={productData} title='Suggested Items' />
+              <Slide products={productData} title='Discounts for You' />
+              <Slide products={productData} title='Recommended Items' />
+            </>
+          }
+        </>
+      }
+
     </div>
   )
 }

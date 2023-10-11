@@ -25,7 +25,7 @@ import ViewProductAdmin from './pages/ViewProductAdmin';
 import AddProduct from './pages/AddProduct';
 import { useSelector } from 'react-redux';
 import Products from '../../components/Products';
-import { productData } from '../../utils/products';
+import { productDataList } from '../../utils/products';
 import ShopcartSpecial from './pages/ShopcartSpecial';
 
 const AdminDashboard = () => {
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
                             currentRole === "Shopcart" &&
                             <>
                                 <Route path="/Admin/shopcart" element={<ShopcartSpecial />} />
-                                <Route path="/Admin/uploadproducts" element={<Products productData={productData} />} />
+                                <Route path="/Admin/uploadproducts" element={<Products productData={productDataList} />} />
                             </>
                         }
 

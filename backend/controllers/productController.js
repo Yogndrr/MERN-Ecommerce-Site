@@ -41,7 +41,14 @@ const getAdminProducts = async (req, res) => {
 
 const getProductDetail = async (req, res) => {
     try {
-        let product = await Product.findById(req.params.id).populate("seller", "shopName");
+        let product = await Product.findById(req.params.id)
+            .populate("seller", "shopName")
+            .populate({
+                path: "reviews.reviewer",
+                model: "customer",
+                select: "name"
+            });
+
         if (product) {
             res.send(product);
         }
@@ -53,18 +60,27 @@ const getProductDetail = async (req, res) => {
     }
 }
 
-
 const updateProduct = async (req, res) => {
     try {
-        let result = await Product.findByIdAndUpdate(req.params.id,
-            { $set: req.body },
-            { new: true })
+        const { rating, comment, reviewer } = req.body;
+        const productId = req.params.id;
 
-        res.send(result)
+        const product = await Product.findById(productId);
+
+        product.reviews.push({
+            rating,
+            comment,
+            reviewer,
+            date: new Date(),
+        });
+
+        const updatedProduct = await product.save();
+
+        res.send(updatedProduct);
     } catch (error) {
         res.status(500).json(error);
     }
-}
+};
 
 const searchProduct = async (req, res) => {
     try {
@@ -167,6 +183,38 @@ const deleteProducts = async (req, res) => {
     }
 };
 
+
+const deleteProductReview = async (req, res) => {
+    try {
+        const { productId, reviewId } = req.body;
+
+        const product = await Product.findById(productId);
+
+        const updatedReviews = product.reviews.filter(review => review._id != reviewId);
+
+        product.reviews = updatedReviews;
+
+        const updatedProduct = await product.save();
+
+        res.send(updatedProduct);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+const deleteAllProductReviews = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        product.reviews = [];
+
+        const updatedProduct = await product.save();
+
+        res.send(updatedProduct);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 module.exports = {
     productCreate,
     getProducts,
@@ -178,4 +226,6 @@ module.exports = {
     searchProductbySubCategory,
     deleteProduct,
     deleteProducts,
+    deleteProductReview,
+    deleteAllProductReviews,
 };

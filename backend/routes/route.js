@@ -16,6 +16,8 @@ const {
     updateProduct,
     deleteProduct,
     deleteProducts,
+    deleteProductReview,
+    deleteAllProductReviews,
 } = require('../controllers/productController.js');
 
 const {
@@ -35,12 +37,17 @@ router.post('/ProductCreate', productCreate);
 router.get('/getAdminProducts/:id', getAdminProducts);
 router.get('/getProducts', getProducts);
 router.get('/getProductDetail/:id', getProductDetail);
+
 router.put('/ProductUpdate/:id', updateProduct);
+
 router.get('/searchProduct/:key', searchProduct);
 router.get('/searchProductbyCategory/:key', searchProductbyCategory);
 router.get('/searchProductbySubCategory/:key', searchProductbySubCategory);
+
 router.delete('/DeleteProduct/:id', deleteProduct);
 router.delete('/DeleteProducts/:id', deleteProducts);
+router.delete('/deleteProductReview/:id', deleteProductReview);
+router.delete('/deleteAllProductReviews/:id', deleteAllProductReviews);
 
 // Customer
 router.post('/CustomerRegister', customerRegister);

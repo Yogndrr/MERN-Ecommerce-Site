@@ -46,6 +46,10 @@ const productSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "customer",
                 },
+                date: {
+                    type: Date,
+                    default: Date.now,
+                },
             },
         ],
         seller: {

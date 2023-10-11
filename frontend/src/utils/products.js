@@ -1,4 +1,4 @@
-export const productData = [
+export const productDataList = [
   {
     productName: "SAMSUNG Galaxy S22 5G (Phantom White, 128 GB)  (8 GB RAM)",
     price: {
