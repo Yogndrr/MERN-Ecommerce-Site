@@ -26,7 +26,7 @@ const getProducts = async (req, res) => {
     }
 };
 
-const getAdminProducts = async (req, res) => {
+const getSellerProducts = async (req, res) => {
     try {
         let products = await Product.find({ seller: req.params.id })
         if (products.length > 0) {
@@ -62,10 +62,28 @@ const getProductDetail = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
+        let result = await Product.findByIdAndUpdate(req.params.id,
+            { $set: req.body },
+            { new: true })
+
+        res.send(result)
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+const addReview = async (req, res) => {
+    try {
         const { rating, comment, reviewer } = req.body;
         const productId = req.params.id;
 
         const product = await Product.findById(productId);
+
+        const existingReview = product.reviews.find(review => review.reviewer.toString() === reviewer);
+
+        if (existingReview) {
+            return res.send({ message: "You have already submitted a review for this product." });
+        }
 
         product.reviews.push({
             rating,
@@ -186,7 +204,8 @@ const deleteProducts = async (req, res) => {
 
 const deleteProductReview = async (req, res) => {
     try {
-        const { productId, reviewId } = req.body;
+        const { reviewId } = req.body;
+        const productId = req.params.id;
 
         const product = await Product.findById(productId);
 
@@ -218,9 +237,10 @@ const deleteAllProductReviews = async (req, res) => {
 module.exports = {
     productCreate,
     getProducts,
-    getAdminProducts,
+    getSellerProducts,
     getProductDetail,
     updateProduct,
+    addReview,
     searchProduct,
     searchProductbyCategory,
     searchProductbySubCategory,

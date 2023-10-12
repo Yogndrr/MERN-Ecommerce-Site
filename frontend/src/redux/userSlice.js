@@ -7,15 +7,17 @@ const initialState = {
     currentUser: JSON.parse(localStorage.getItem('user')) || null,
     currentRole: (JSON.parse(localStorage.getItem('user')) || {}).role || null,
     error: null,
+
     response: null,
+    responseReview: null,
     responseProducts: null,
-    responseAdminProducts: null,
+    responseSellerProducts: null,
     responseDetails: null,
     responseSearch: null,
-    pages: ["Login/Register"],
+
     filteredProducts: [],
     productData: [],
-    adminProductData: [],
+    sellerProductData: [],
     productDetails: {},
 };
 
@@ -46,6 +48,11 @@ const userSlice = createSlice({
             state.response = null;
             state.error = null;
         },
+        updateFailed: (state, action) => {
+            state.status = 'failed';
+            state.responseReview = action.payload;
+            state.error = null;
+        },
         authSuccess: (state, action) => {
             state.status = 'success';
             state.currentUser = action.payload;
@@ -53,12 +60,6 @@ const userSlice = createSlice({
             localStorage.setItem('user', JSON.stringify(action.payload));
             state.response = null;
             state.error = null;
-            if (action.payload.role === "Customer") {
-                state.pages = ["Search"];
-            }
-            else if (action.payload.role === "Admin") {
-                state.pages = ["Dashboard"];
-            }
         },
         addToCart: (state, action) => {
             const existingProduct = state.currentUser.cartDetails.find(
@@ -112,12 +113,11 @@ const userSlice = createSlice({
         authLogout: (state) => {
             localStorage.removeItem('user');
             state.status = 'idle';
-            state.loading = true;
+            state.loading = false;
             state.currentUser = null;
             state.currentRole = null;
             state.error = null;
             state.response = true;
-            state.pages = ["Login/Register"];
         },
 
         doneSuccess: (state, action) => {
@@ -127,6 +127,7 @@ const userSlice = createSlice({
             state.response = null;
         },
         getDeleteSuccess: (state) => {
+            state.status = 'deleted';
             state.loading = false;
             state.error = null;
             state.response = null;
@@ -141,9 +142,9 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
-        adminProductSuccess: (state, action) => {
-            state.adminProductData = action.payload;
-            state.responseAdminProducts = null;
+        sellerProductSuccess: (state, action) => {
+            state.sellerProductData = action.payload;
+            state.responseSellerProducts = null;
             state.loading = false;
             state.error = null;
         },
@@ -158,8 +159,8 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
-        getAdminProductsFailed: (state, action) => {
-            state.responseAdminProducts = action.payload;
+        getSellerProductsFailed: (state, action) => {
+            state.responseSellerProducts = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -176,9 +177,6 @@ const userSlice = createSlice({
         getError: (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        setPages: (state, action) => {
-            state.pages = action.payload;
         },
         getSearchFailed: (state, action) => {
             state.responseSearch = action.payload;
@@ -199,6 +197,7 @@ export const {
     underControl,
     stuffAdded,
     stuffUpdated,
+    updateFailed,
     authSuccess,
     authFailed,
     authError,
@@ -207,14 +206,13 @@ export const {
     getDeleteSuccess,
     getRequest,
     productSuccess,
-    adminProductSuccess,
+    sellerProductSuccess,
     productDetailsSuccess,
     getProductsFailed,
-    getAdminProductsFailed,
+    getSellerProductsFailed,
     getProductDetailsFailed,
     getFailed,
     getError,
-    setPages,
     getSearchFailed,
     setFilteredProducts,
 

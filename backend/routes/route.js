@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
 const {
-    adminRegister,
-    adminLogIn
-} = require('../controllers/adminController.js');
+    sellerRegister,
+    sellerLogIn
+} = require('../controllers/sellerController.js');
 
 const {
     productCreate,
@@ -12,12 +12,13 @@ const {
     searchProduct,
     searchProductbyCategory,
     searchProductbySubCategory,
-    getAdminProducts,
+    getSellerProducts,
     updateProduct,
     deleteProduct,
     deleteProducts,
     deleteProductReview,
     deleteAllProductReviews,
+    addReview,
 } = require('../controllers/productController.js');
 
 const {
@@ -28,17 +29,18 @@ const {
     cartUpdate
 } = require('../controllers/customerController.js');
 
-// Admin
-router.post('/AdminRegister', adminRegister);
-router.post('/AdminLogin', adminLogIn);
+// Seller
+router.post('/SellerRegister', sellerRegister);
+router.post('/SellerLogin', sellerLogIn);
 
 // Product
 router.post('/ProductCreate', productCreate);
-router.get('/getAdminProducts/:id', getAdminProducts);
+router.get('/getSellerProducts/:id', getSellerProducts);
 router.get('/getProducts', getProducts);
 router.get('/getProductDetail/:id', getProductDetail);
 
 router.put('/ProductUpdate/:id', updateProduct);
+router.put('/addReview/:id', addReview);
 
 router.get('/searchProduct/:key', searchProduct);
 router.get('/searchProductbyCategory/:key', searchProductbyCategory);
@@ -46,7 +48,7 @@ router.get('/searchProductbySubCategory/:key', searchProductbySubCategory);
 
 router.delete('/DeleteProduct/:id', deleteProduct);
 router.delete('/DeleteProducts/:id', deleteProducts);
-router.delete('/deleteProductReview/:id', deleteProductReview);
+router.put('/deleteProductReview/:id', deleteProductReview);
 router.delete('/deleteAllProductReviews/:id', deleteAllProductReviews);
 
 // Customer

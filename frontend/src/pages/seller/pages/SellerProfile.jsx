@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Paper, Typography, Avatar } from '@mui/material';
 
-const AdminProfile = () => {
+const SellerProfile = () => {
   const { currentUser } = useSelector(state => state.user);
 
   return (
@@ -28,7 +28,7 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default SellerProfile;
 
 const ProfileContainer = styled.div`
   display: flex;

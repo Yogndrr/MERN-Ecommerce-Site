@@ -15,20 +15,20 @@ import { AppBar, Drawer, NavLogo } from '../../utils/styles';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import Logout from '../../components/Logout';
 import SideBar from './components/SideBar';
-import AdminProfile from './pages/AdminProfile';
-import AdminHomePage from './pages/AdminHomePage';
+import SellerHomePage from './pages/SellerHomePage';
 
 import AccountMenu from './components/AccountMenu';
 import ShowProducts from './pages/ShowProducts';
 import ShowOrders from './pages/ShowOrders';
-import ViewProductAdmin from './pages/ViewProductAdmin';
+import ViewProductSeller from './pages/ViewProductSeller';
 import AddProduct from './pages/AddProduct';
 import { useSelector } from 'react-redux';
 import Products from '../../components/Products';
 import { productDataList } from '../../utils/products';
 import ShopcartSpecial from './pages/ShopcartSpecial';
+import Profile from '../../components/Profile';
 
-const AdminDashboard = () => {
+const SellerDashboard = () => {
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -142,25 +142,25 @@ const AdminDashboard = () => {
                 <Box component="main" sx={styles.boxStyled}>
                     <Toolbar />
                     <Routes>
-                        <Route path="/" element={<AdminHomePage />} />
+                        <Route path="/" element={<SellerHomePage />} />
                         <Route path='*' element={<Navigate to="/" />} />
-                        <Route path="/Admin/dashboard" element={<AdminHomePage />} />
-                        <Route path="/Admin/profile" element={<AdminProfile />} />
+                        <Route path="/Seller/dashboard" element={<SellerHomePage />} />
+                        <Route path="/Seller/profile" element={<Profile />} />
 
                         {/* Class */}
-                        <Route path="/Admin/addproduct" element={<AddProduct />} />
-                        <Route path="/Admin/products" element={<ShowProducts />} />
-                        <Route path="/Admin/products/product/:id" element={<ViewProductAdmin />} />
+                        <Route path="/Seller/addproduct" element={<AddProduct />} />
+                        <Route path="/Seller/products" element={<ShowProducts />} />
+                        <Route path="/Seller/products/product/:id" element={<ViewProductSeller />} />
 
                         {
                             currentRole === "Shopcart" &&
                             <>
-                                <Route path="/Admin/shopcart" element={<ShopcartSpecial />} />
-                                <Route path="/Admin/uploadproducts" element={<Products productData={productDataList} />} />
+                                <Route path="/Seller/shopcart" element={<ShopcartSpecial />} />
+                                <Route path="/Seller/uploadproducts" element={<Products productData={productDataList} />} />
                             </>
                         }
 
-                        <Route path="/Admin/orders" element={<ShowOrders />} />
+                        <Route path="/Seller/orders" element={<ShowOrders />} />
 
                         <Route path="/logout" element={<Logout />} />
                     </Routes>
@@ -170,7 +170,7 @@ const AdminDashboard = () => {
     );
 }
 
-export default AdminDashboard
+export default SellerDashboard
 
 const styles = {
     boxStyled: {

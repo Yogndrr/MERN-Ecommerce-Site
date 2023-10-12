@@ -16,3 +16,9 @@ export const timeAgo = (date) => {
         return `on ${reviewDate.toLocaleDateString(undefined, options)}`;
     }
 };
+
+export const generateRandomColor = (id) => {
+    const hash = id.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    const color = `hsl(${hash % 360}, 70%, 70%)`;
+    return color;
+};

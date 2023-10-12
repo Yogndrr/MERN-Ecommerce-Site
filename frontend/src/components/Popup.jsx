@@ -20,14 +20,14 @@ const Popup = ({ message, setShowPopup, showPopup }) => {
 
     return (
         <>
-            <Snackbar open={showPopup} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
+            <Snackbar open={showPopup} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{ vertical, horizontal }} key={vertical + horizontal}>
                 {
-                    (message === "Network Error") ?
-                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                    (message === "Order Done Successfully" || message === "Done Successfully") ?
+                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                             {message}
                         </Alert>
                         :
-                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
                             {message}
                         </Alert>
                 }

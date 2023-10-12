@@ -11,11 +11,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import Chart from 'react-apexcharts';
-import { FullLineChartTwo } from '../../../utils/chartData';
+import { ChartDatabyYear } from '../../../utils/chartData';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const OverviewSales = ({ type }) => {
+const SalesChart = ({ type }) => {
 
     const navigate = useNavigate();
 
@@ -38,8 +38,8 @@ const OverviewSales = ({ type }) => {
             />
             <CardContent sx={{ display: "flex", justifyContent: 'center', alignItems: "center", height: 310 }}>
                 <ResponsiveChart
-                    options={FullLineChartTwo.options}
-                    series={FullLineChartTwo.series}
+                    options={ChartDatabyYear.options}
+                    series={ChartDatabyYear.series}
                     type={type}
                 />
             </CardContent>
@@ -55,7 +55,7 @@ const OverviewSales = ({ type }) => {
                         </SvgIcon>
                     )}
                     size="small"
-                    onClick={() => navigate("/Admin/orders")}
+                    onClick={() => navigate("/Seller/orders")}
                 >
                     Details
                 </Button>
@@ -64,7 +64,7 @@ const OverviewSales = ({ type }) => {
     );
 };
 
-export default OverviewSales;
+export default SalesChart;
 
 const ResponsiveChart = styled(Chart)`
     width: 550px;

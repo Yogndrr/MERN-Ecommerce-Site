@@ -50,7 +50,7 @@ const AuthenticationPage = ({ mode, role }) => {
                 return;
             }
 
-            if (role === "Admin") {
+            if (role === "Seller") {
                 const shopName = event.target.shopName.value;
 
                 if (!shopName) {
@@ -58,8 +58,8 @@ const AuthenticationPage = ({ mode, role }) => {
                     return;
                 }
 
-                const adminFields = { name, email, password, role, shopName }
-                dispatch(authUser(adminFields, role, mode))
+                const sellerFields = { name, email, password, role, shopName }
+                dispatch(authUser(sellerFields, role, mode))
             }
             else {
                 const customerFields = { name, email, password, role }
@@ -116,17 +116,17 @@ const AuthenticationPage = ({ mode, role }) => {
                             {role} {mode}
                         </Typography>
 
-                        {role === "Admin" && mode === "Register" &&
+                        {role === "Seller" && mode === "Register" &&
                             <Typography variant="h7">
-                                Create your own shop by registering as an admin.
+                                Create your own shop by registering as an seller.
                                 <br />
-                                You will be able to add products and manage the system.
+                                You will be able to add products sell them.
                             </Typography>
                         }
 
                         {role === "Customer" && mode === "Register" &&
                             <Typography variant="h7">
-                                Register now and enjoy the experience.
+                                Register now to explore and buy products.
                             </Typography>
                         }
 
@@ -152,7 +152,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                     onChange={handleInputChange}
                                 />
                             }
-                            {mode === "Register" && role === "Admin" &&
+                            {mode === "Register" && role === "Seller" &&
                                 <TextField
                                     margin="normal"
                                     required
@@ -162,7 +162,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                     name="shopName"
                                     autoComplete="off"
                                     error={shopNameError}
-                                    helperText={shopNameError && 'School name is required'}
+                                    helperText={shopNameError && 'Shop name is required'}
                                     onChange={handleInputChange}
                                 />
                             }

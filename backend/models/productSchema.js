@@ -54,7 +54,7 @@ const productSchema = new mongoose.Schema(
         ],
         seller: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'admin'
+            ref: 'seller'
         },
     }, { timestamps: true });
 

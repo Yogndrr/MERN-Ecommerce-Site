@@ -16,9 +16,10 @@ import {
     getProductsFailed,
     setFilteredProducts,
     getSearchFailed,
-    adminProductSuccess,
-    getAdminProductsFailed,
+    sellerProductSuccess,
+    getSellerProductsFailed,
     stuffUpdated,
+    updateFailed,
 } from './userSlice';
 
 export const authUser = (fields, role, mode) => async (dispatch) => {
@@ -120,27 +121,31 @@ export const updateCustomer = (fields, id, address) => async (dispatch) => {
 export const updateStuff = (fields, id, address) => async (dispatch) => {
 
     try {
-        await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
+        const result = await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
             headers: { 'Content-Type': 'application/json' },
         });
-
-        dispatch(stuffUpdated());
+        if (result.data.message) {
+            dispatch(updateFailed(result.data));
+        }
+        else {
+            dispatch(stuffUpdated());
+        }
 
     } catch (error) {
         dispatch(getError(error));
     }
 }
 
-export const getProductsbyAdmin = (id) => async (dispatch) => {
+export const getProductsbySeller = (id) => async (dispatch) => {
     dispatch(getRequest());
 
     try {
-        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getAdminProducts/${id}`);
+        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getSellerProducts/${id}`);
         if (result.data.message) {
-            dispatch(getAdminProductsFailed(result.data));
+            dispatch(getSellerProductsFailed(result.data));
         }
         else {
-            dispatch(adminProductSuccess(result.data));
+            dispatch(sellerProductSuccess(result.data));
         }
     } catch (error) {
         dispatch(getError(error));

@@ -1,58 +1,72 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { BasicButton, BrownButton, DarkRedButton, IndigoButton } from '../../../utils/buttonStyles';
 import { useNavigate } from 'react-router-dom';
-import { deleteStuff, getProductsbyAdmin } from '../../../redux/userHandle';
+import { deleteStuff, getProductsbySeller } from '../../../redux/userHandle';
 import SpeedDialTemplate from '../../../components/SpeedDialTemplate.jsx';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from '@mui/icons-material/Upload';
+import AlertDialogSlide from '../../../components/AlertDialogSlide';
 
 const ShowProducts = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
-  const { currentUser, currentRole, loading, adminProductData, responseAdminProducts } = useSelector(state => state.user);
+  const { currentUser, currentRole, loading, sellerProductData, responseSellerProducts } = useSelector(state => state.user);
 
-  const adminID = currentUser._id
+  const sellerID = currentUser._id
+
+  const [dialog, setDialog] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
-    dispatch(getProductsbyAdmin(currentUser._id));
+    dispatch(getProductsbySeller(currentUser._id));
   }, [dispatch, currentUser._id])
 
   const deleteHandler = (deleteID, address) => {
     dispatch(deleteStuff(deleteID, address))
       .then(() => {
-        dispatch(getProductsbyAdmin(currentUser._id));
+        dispatch(getProductsbySeller(currentUser._id));
       })
+  }
+
+  const deleteAllProducts = () => {
+    deleteHandler(sellerID, "DeleteProducts")
   }
 
   const actions = [
     {
       icon: <AddCardIcon color="primary" />, name: 'Add New Product',
-      action: () => navigate("/Admin/addproduct")
+      action: () => navigate("/Seller/addproduct")
     },
     {
       icon: <DeleteIcon color="error" />, name: 'Delete All Products',
-      action: () => deleteHandler(adminID, "DeleteProducts")
+      action: () => {
+        setDialog("Do you want to delete all products ?")
+        setShowDialog(true)
+      }
     },
   ];
 
   const shopcartActions = [
     {
       icon: <AddCardIcon color="primary" />, name: 'Add New Product',
-      action: () => navigate("/Admin/addproduct")
+      action: () => navigate("/Seller/addproduct")
     },
     {
       icon: <UploadIcon color="success" />, name: 'Upload New Product',
-      action: () => navigate("/Admin/uploadproducts")
+      action: () => navigate("/Seller/uploadproducts")
     },
     {
       icon: <DeleteIcon color="error" />, name: 'Delete All Products',
-      action: () => deleteHandler(adminID, "DeleteProducts")
+      action: () => {
+        setDialog("Do you want to delete all products ?")
+        setShowDialog(true)
+      }
     },
   ];
 
@@ -63,24 +77,24 @@ const ShowProducts = () => {
         :
         <>
           {
-            responseAdminProducts ?
+            responseSellerProducts ?
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                <IndigoButton onClick={() => navigate("/Admin/addproduct")}>
+                <IndigoButton onClick={() => navigate("/Seller/addproduct")}>
                   Add Product
                 </IndigoButton>
                 <br /><br />
                 {
                   currentRole === "Shopcart" &&
-                  <BrownButton onClick={() => navigate("/Admin/uploadproducts")}>
+                  <BrownButton onClick={() => navigate("/Seller/uploadproducts")}>
                     Upload Product
                   </BrownButton>
                 }
               </Box>
               :
               <>
-                {Array.isArray(adminProductData) && adminProductData.length > 0 &&
+                {Array.isArray(sellerProductData) && sellerProductData.length > 0 &&
                   <ProductGrid container spacing={3}>
-                    {adminProductData.map((data, index) => (
+                    {sellerProductData.map((data, index) => (
                       <Grid item xs={12} sm={6} md={4}
                         key={index}
                       >
@@ -97,7 +111,7 @@ const ShowProducts = () => {
                               Delete
                             </DarkRedButton>
                             <BasicButton
-                              onClick={() => navigate("/Admin/products/product/" + data._id)}
+                              onClick={() => navigate("/Seller/products/product/" + data._id)}
                             >
                               View
                             </BasicButton>
@@ -118,6 +132,7 @@ const ShowProducts = () => {
           }
         </>
       }
+      <AlertDialogSlide dialog={dialog} showDialog={showDialog} setShowDialog={setShowDialog} taskHandler={deleteAllProducts} />
     </>
   )
 };

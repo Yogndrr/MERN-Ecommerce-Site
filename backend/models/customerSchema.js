@@ -53,7 +53,7 @@ const customerSchema = new mongoose.Schema({
         },
         seller: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'admin'
+            ref: 'seller'
         },
     }]
 });

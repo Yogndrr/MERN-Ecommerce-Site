@@ -1,3 +1,33 @@
+export const ChartDatabyYear = {
+    options: {
+        xaxis: {
+            categories: ["2018", "2019", "2020", "2021", "2022", "2023"],
+            axisBorder: { show: true },
+            axisTicks: { show: false },
+            labels: { show: true }
+        },
+        yaxis: {
+            min: 0,
+            max: 500,
+        },
+        grid: { show: false },
+        chart: {
+            sparkline: {
+                enabled: false
+            },
+            toolbar: {
+                show: false
+            }
+        }
+    },
+    series: [
+        {
+            name: "series-1",
+            data: [100, 170, 200, 450, 300, 400]
+        }
+    ]
+}
+
 export const ChartDataMonth = {
     type: 'line',
     height: 90,
@@ -95,52 +125,3 @@ export const ChartDataYear = {
         }
     ]
 };
-
-export const FullLineChart = {
-    type: "line",
-    width: 385,
-    options: {
-        chart: {
-            id: "basic-bar"
-        },
-        xaxis: {
-            categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        }
-    },
-    series: [
-        {
-            name: "series-1",
-            data: [30, 40, 45, 50, 49, 60, 70, 91]
-        }
-    ]
-}
-
-export const FullLineChartTwo = {
-    options: {
-        xaxis: {
-            categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000],
-            axisBorder: { show: true },
-            axisTicks: { show: false },
-            labels: { show: true }
-        },
-        yaxis: {
-            min: 0,
-            max: 100
-        },
-        grid: { show: false },
-        chart: {
-            sparkline: {
-                enabled: false
-            },
-            toolbar: {
-                show: false
-            }
-        }
-    },
-    series: [
-        {
-            name: "series-1",
-            data: [30, 40, 45, 50, 49, 60, 70, 91, 45, 2]
-        }
-    ]
-}

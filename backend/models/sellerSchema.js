@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const adminSchema = new mongoose.Schema({
+const sellerSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -16,7 +16,7 @@ const adminSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: "Admin"
+        default: "Seller"
     },
     shopName: {
         type: String,
@@ -25,4 +25,4 @@ const adminSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("admin", adminSchema)
+module.exports = mongoose.model("seller", sellerSchema)

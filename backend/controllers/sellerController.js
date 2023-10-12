@@ -1,27 +1,27 @@
 const bcrypt = require('bcrypt');
-const Admin = require('../models/adminSchema.js');
+const Seller = require('../models/sellerSchema.js');
 
-const adminRegister = async (req, res) => {
+const sellerRegister = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(req.body.password, salt);
 
-        const admin = new Admin({
+        const seller = new Seller({
             ...req.body,
             password: hashedPass
         });
 
-        const existingAdminByEmail = await Admin.findOne({ email: req.body.email });
-        const existingShop = await Admin.findOne({ shopName: req.body.shopName });
+        const existingSellerByEmail = await Seller.findOne({ email: req.body.email });
+        const existingShop = await Seller.findOne({ shopName: req.body.shopName });
 
-        if (existingAdminByEmail) {
+        if (existingSellerByEmail) {
             res.send({ message: 'Email already exists' });
         }
         else if (existingShop) {
             res.send({ message: 'Shop name already exists' });
         }
         else {
-            let result = await admin.save();
+            let result = await seller.save();
             result.password = undefined;
             res.send(result);
         }
@@ -30,14 +30,14 @@ const adminRegister = async (req, res) => {
     }
 };
 
-const adminLogIn = async (req, res) => {
+const sellerLogIn = async (req, res) => {
     if (req.body.email && req.body.password) {
-        let admin = await Admin.findOne({ email: req.body.email });
-        if (admin) {
-            const validated = await bcrypt.compare(req.body.password, admin.password);
+        let seller = await Seller.findOne({ email: req.body.email });
+        if (seller) {
+            const validated = await bcrypt.compare(req.body.password, seller.password);
             if (validated) {
-                admin.password = undefined;
-                res.send(admin);
+                seller.password = undefined;
+                res.send(seller);
             } else {
                 res.send({ message: "Invalid password" });
             }
@@ -49,4 +49,4 @@ const adminLogIn = async (req, res) => {
     }
 };
 
-module.exports = { adminRegister, adminLogIn };
+module.exports = { sellerRegister, sellerLogIn };

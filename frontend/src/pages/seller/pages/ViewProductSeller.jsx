@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { BlueButton, GreenButton } from '../../../utils/buttonStyles';
-import { getProductDetails, updateCustomer } from '../../../redux/userHandle';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
-import { Box, CircularProgress, Collapse, Stack, TextField } from '@mui/material';
+import { BlueButton, DarkRedButton, GreenButton } from '../../../utils/buttonStyles';
+import { deleteStuff, getProductDetails, updateStuff } from '../../../redux/userHandle';
+import { Delete, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
+import { Avatar, Box, Card, CircularProgress, Collapse, IconButton, Stack, TextField, Typography } from '@mui/material';
 import altImage from "../../../assets/altimg.png";
 import Popup from '../../../components/Popup';
+import { generateRandomColor, timeAgo } from '../../../utils/helperFunctions';
+import { underControl } from '../../../redux/userSlice';
+import AlertDialogSlide from '../../../components/AlertDialogSlide';
 
-const ViewProductAdmin = () => {
+const ViewProductSeller = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const productID = params.id;
@@ -37,6 +40,9 @@ const ViewProductAdmin = () => {
   const [loader, setLoader] = useState(false);
   const [message, setMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+
+  const [dialog, setDialog] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
     if (productDetails) {
@@ -72,22 +78,35 @@ const ViewProductAdmin = () => {
   const submitHandler = (event) => {
     event.preventDefault();
     setLoader(true);
-    dispatch(updateCustomer(fields, productID, "ProductUpdate"));
+    dispatch(updateStuff(fields, productID, "ProductUpdate"));
   };
 
+  const deleteHandler = (reviewId) => {
+    console.log(reviewId);
+
+    const fields = { reviewId };
+
+    dispatch(updateStuff(fields, productID, "deleteProductReview"));
+  };
+
+  const deleteAllHandler = () => {
+    dispatch(deleteStuff(productID, "deleteAllProductReviews"))
+  }
+
   useEffect(() => {
-    if (status === "updated") {
+    if (status === "updated" || status === "deleted") {
       setLoader(false);
       dispatch(getProductDetails(productID));
       setShowPopup(true);
       setMessage("Done Successfully");
       setShowTab(false)
+      dispatch(underControl());
     } else if (error) {
       setLoader(false);
       setMessage("Network Error");
       setShowPopup(true);
     }
-  }, [status, error]);
+  }, [status, error, dispatch, productID]);
 
   return (
     <>
@@ -260,8 +279,54 @@ const ViewProductAdmin = () => {
                   </Box>
                 </Collapse>
 
-                <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
+                <ReviewWritingContainer>
+                  <Typography variant="h4">Reviews</Typography>
 
+                  {productDetails.reviews && productDetails.reviews.length > 0 &&
+                    <DarkRedButton onClick={() => {
+                      setDialog("Do you want to delete all notices ?")
+                      setShowDialog(true)
+                    }}>
+                      Remove All Reviews
+                    </DarkRedButton>}
+                </ReviewWritingContainer>
+
+                {productDetails.reviews && productDetails.reviews.length > 0 ? (
+                  <ReviewContainer>
+                    {productDetails.reviews.map((review, index) => (
+                      <ReviewCard key={index}>
+                        <ReviewCardDivision>
+                          <Avatar sx={{ width: "60px", height: "60px", marginRight: "1rem", backgroundColor: generateRandomColor(review._id) }}>
+                            {String(review.reviewer.name).charAt(0)}
+                          </Avatar>
+                          <ReviewDetails>
+                            <Typography variant="h6">{review.reviewer.name}</Typography>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+
+                              <Typography variant="body2">
+                                {timeAgo(review.date)}
+                              </Typography>
+                            </div>
+                            <Typography variant="subtitle1">Rating: {review.rating}</Typography>
+                            <Typography variant="body1">{review.comment}</Typography>
+                          </ReviewDetails>
+                          <IconButton onClick={() => deleteHandler(review._id)}
+                            sx={{ width: "4rem", p: 0 }}>
+                            <Delete color='error' sx={{ fontSize: "2rem" }} />
+                          </IconButton>
+                        </ReviewCardDivision>
+                      </ReviewCard>
+                    ))}
+                  </ReviewContainer>
+                )
+                  :
+                  <ReviewWritingContainer>
+                    <Typography variant="h6">No Reviews Found.</Typography>
+                  </ReviewWritingContainer>
+                }
+
+                <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
+                <AlertDialogSlide dialog={dialog} showDialog={showDialog} setShowDialog={setShowDialog} taskHandler={deleteAllHandler} />
               </>
           }
         </>
@@ -270,7 +335,7 @@ const ViewProductAdmin = () => {
   );
 };
 
-export default ViewProductAdmin;
+export default ViewProductSeller;
 
 const ProductContainer = styled.div`
     display: flex;
@@ -338,4 +403,37 @@ const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+const ReviewWritingContainer = styled.div`
+    margin: 6rem;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+`;
+
+const ReviewContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+`;
+
+const ReviewCard = styled(Card)`
+  && {
+    background-color: white;
+    margin-bottom: 2rem;
+    padding: 1rem;
+  }
+`;
+
+const ReviewCardDivision = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const ReviewDetails = styled.div`
+  flex: 1;
 `;

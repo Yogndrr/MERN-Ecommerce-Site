@@ -5,7 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
@@ -13,13 +12,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Logout } from '@mui/icons-material';
+import { Login, Logout, Store } from '@mui/icons-material';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Badge, Divider, Drawer, ListItemIcon } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
-import { setPages } from '../redux/userSlice';
 import { NavLogo } from '../utils/styles';
 
 import Cart from './customer/components/Cart';
@@ -27,33 +25,22 @@ import Search from './customer/components/Search';
 import ProductsMenu from './customer/components/ProductsMenu';
 
 const Navbar = () => {
-    const { currentUser, currentRole, pages } = useSelector(state => state.user);
-
-    const dispatch = useDispatch();
-
-    React.useEffect(() => {
-        if (currentRole === "Customer") {
-            dispatch(setPages(["Search"]));
-        }
-        else if (currentRole === "Admin") {
-            dispatch(setPages(["Dashboard"]));
-        }
-    }, [currentRole, dispatch, currentUser])
+    const { currentUser, currentRole } = useSelector(state => state.user);
 
     const totalQuantity = currentUser && currentUser.cartDetails && currentUser.cartDetails.reduce((total, item) => total + item.quantity, 0);
-
 
     const navigate = useNavigate()
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElSign, setAnchorElSign] = React.useState(null);
 
     const open = Boolean(anchorElUser);
+    const openSign = Boolean(anchorElSign);
 
     const [isCartOpen, setIsCartOpen] = React.useState(false);
 
-    const searchPage = pages.find(page => page === "Search");
-
+    // Cart
     const handleOpenCart = () => {
         setIsCartOpen(true);
     };
@@ -62,20 +49,31 @@ const Navbar = () => {
         setIsCartOpen(false);
     };
 
+    // Navigation Menu
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
+
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null);
+    };
+
+    // User Menu
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = (page) => {
-        navigate(`/${page}`);
-        setAnchorElNav(null);
-    };
-
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+    };
+
+    // Signin Menu
+    const handleOpenSigninMenu = (event) => {
+        setAnchorElSign(event.currentTarget);
+    };
+
+    const handleCloseSigninMenu = () => {
+        setAnchorElSign(null);
     };
 
     const homeHandler = () => {
@@ -90,58 +88,16 @@ const Navbar = () => {
                     {/* MOBILE */}
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        {
-                            searchPage ?
-                                <>
-                                    <IconButton
-                                        size="large"
-                                        aria-label="account of current user"
-                                        aria-controls="menu-appbar"
-                                        aria-haspopup="true"
-                                        onClick={() => { navigate("/Search") }}
-                                        color="inherit"
-                                    >
-                                        <SearchIcon />
-                                    </IconButton>
-                                </>
-                                :
-                                <>
-                                    <IconButton
-                                        size="large"
-                                        aria-label="account of current user"
-                                        aria-controls="menu-appbar"
-                                        aria-haspopup="true"
-                                        onClick={handleOpenNavMenu}
-                                        color="inherit"
-                                    >
-                                        <MenuIcon />
-                                    </IconButton>
-                                    <Menu
-                                        id="menu-appbar"
-                                        anchorEl={anchorElNav}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'left',
-                                        }}
-                                        keepMounted
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'left',
-                                        }}
-                                        open={Boolean(anchorElNav)}
-                                        onClose={handleCloseNavMenu}
-                                        sx={{
-                                            display: { xs: 'block', md: 'none' },
-                                        }}
-                                    >
-                                        {pages.map((page) => (
-                                            <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
-                                                <Typography textAlign="center">{page}</Typography>
-                                            </MenuItem>
-                                        ))}
-                                    </Menu>
-                                </>
-                        }
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={() => { navigate("/Search") }}
+                            color="inherit"
+                        >
+                            <SearchIcon />
+                        </IconButton>
                     </Box>
 
                     <HomeContainer>
@@ -168,12 +124,59 @@ const Navbar = () => {
                                 duration={500}
                                 onClick={homeHandler}
                             >
-                                <LocalMallIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-
                                 SHOPCART
                             </NavLogo>
                         </Typography>
                     </HomeContainer>
+
+                    {currentRole === null &&
+                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                            <>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleOpenNavMenu}
+                                    color="inherit"
+                                >
+                                    <Login />
+                                </IconButton>
+                                <Menu
+                                    id="menu-appbar"
+                                    anchorEl={anchorElNav}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                    open={Boolean(anchorElNav)}
+                                    onClose={handleCloseNavMenu}
+                                    onClick={handleCloseUserMenu}
+                                    sx={{
+                                        display: { xs: 'block', md: 'none' },
+                                    }}
+                                >
+                                    <MenuItem onClick={() => {
+                                        navigate("/Customerlogin")
+                                        handleCloseNavMenu()
+                                    }}>
+                                        <Typography textAlign="center">Sign in as customer</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={() => {
+                                        navigate("/Sellerlogin")
+                                        handleCloseNavMenu()
+                                    }}>
+                                        <Typography textAlign="center">Sign in as seller</Typography>
+                                    </MenuItem>
+                                </Menu>
+                            </>
+                        </Box>
+                    }
 
                     {/* DESKTOP */}
 
@@ -207,36 +210,53 @@ const Navbar = () => {
                         </Typography>
                     </HomeContainer>
 
-                    {/* DESKTOP */}
-
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, }}>
-                        {
-                            searchPage ?
-                                <>
-                                    <Search />
-                                </>
-                                :
-                                <>
-                                    {pages.map((page) => (
-                                        <Button
-                                            key={page}
-                                            onClick={() => handleCloseNavMenu(page)}
-                                            sx={{ my: 2, color: 'white', display: 'block' }}
-                                        >
-                                            {page}
-                                        </Button>
-                                    ))}
-                                </>
-                        }
-
-                        {currentRole === "Customer" &&
-                            <ProductsMenu dropName="Categories" />
-                        }
-                        {currentRole === "Customer" &&
-                            <ProductsMenu dropName="Products" />
-                        }
-
+                        <Search />
+                        <ProductsMenu dropName="Categories" />
+                        <ProductsMenu dropName="Products" />
                     </Box>
+
+                    {currentRole === null &&
+                        <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' }, }}>
+                            <Button
+                                onClick={handleOpenSigninMenu}
+                                sx={{ my: 2, color: 'white', display: 'block' }}
+                            >
+                                Sign in
+                            </Button>
+                            <Menu
+                                anchorEl={anchorElSign}
+                                id="menu-appbar"
+                                open={openSign}
+                                onClose={handleCloseSigninMenu}
+                                onClick={handleCloseSigninMenu}
+                                PaperProps={{
+                                    elevation: 0,
+                                    sx: styles.styledPaper,
+                                }}
+                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                            >
+                                <MenuItem onClick={() => navigate("/Customerlogin")}>
+                                    <Avatar />
+                                    <Link to="/Customerlogin">
+                                        Sign in as customer
+                                    </Link>
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem onClick={() => navigate("/Sellerlogin")}>
+                                    <ListItemIcon>
+                                        <Store fontSize="small" />
+                                    </ListItemIcon>
+                                    <Link to="/Sellerlogin">
+                                        Sign in as seller
+                                    </Link>
+                                </MenuItem>
+                            </Menu>
+                        </Box>
+                    }
+
+                    {/* BOTH */}
 
                     {currentRole === "Customer" &&
                         <Box sx={{ flexGrow: 0, display: 'flex' }}>
@@ -296,16 +316,17 @@ const Navbar = () => {
                 </Toolbar>
             </Container>
 
-            {isCartOpen &&
+            {
+                isCartOpen &&
                 <Drawer
                     anchor="right"
                     open={isCartOpen}
                     onClose={handleCloseCart}
                     sx={{
-                        width: '400px', // Set the desired width of the drawer
+                        width: '400px',
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
-                            width: '400px', // Set the desired width of the drawer
+                            width: '400px',
                             boxSizing: 'border-box',
                         },
                     }}

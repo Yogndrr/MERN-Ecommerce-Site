@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 import { Icon } from '@iconify/react';
 import CountUp from 'react-countup';
 
-const AppWidgetSummary = ({ title, total, color, icon }) => {
+const SalesCard = ({ title, total, color, icon }) => {
     return (
         <Card
             sx={{
@@ -42,7 +42,7 @@ const AppWidgetSummary = ({ title, total, color, icon }) => {
     );
 }
 
-export default AppWidgetSummary
+export default SalesCard
 
 const Iconify = forwardRef(({ icon, width = 20, sx, ...other }, ref) => (
     <Box ref={ref} component={Icon} icon={icon} sx={{ width, height: width, ...sx }} {...other} />

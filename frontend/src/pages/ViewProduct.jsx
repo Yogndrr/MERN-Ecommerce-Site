@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../redux/userSlice';
+import { addToCart, underControl } from '../redux/userSlice';
 import styled from 'styled-components';
 import { BasicButton, GreenButton } from '../utils/buttonStyles';
 import { getProductDetails, updateStuff } from '../redux/userHandle';
-import { Avatar, Box, Card, Rating, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Card, IconButton, Menu, MenuItem, Rating, TextField, Typography } from '@mui/material';
 import Popup from '../components/Popup';
-import { timeAgo } from '../utils/dateHelper';
+import { generateRandomColor, timeAgo } from '../utils/helperFunctions';
+import { MoreVert } from '@mui/icons-material';
 
 const ViewProduct = () => {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const ViewProduct = () => {
     const productID = params.id;
 
 
-    const { currentUser, currentRole, productDetails, loading, status, error, responseDetails } = useSelector(state => state.user);
+    const { currentUser, currentRole, productDetails, loading, status, error, responseReview, responseDetails } = useSelector(state => state.user);
 
     useEffect(() => {
         dispatch(getProductDetails(productID));
@@ -27,31 +28,54 @@ const ViewProduct = () => {
     const [message, setMessage] = useState("");
     const [showPopup, setShowPopup] = useState(false);
 
+    const [anchorElMenu, setAnchorElMenu] = useState(null);
+
+    const handleOpenMenu = (event) => {
+        setAnchorElMenu(event.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorElMenu(null);
+    };
+
     const handleRatingChange = (event, newRating) => {
         setRating(newRating);
     };
 
-    const reviewer = currentUser && currentUser._id
+    const deleteHandler = (reviewId) => {
+        const fields = { reviewId };
 
-    const fields = { rating, comment, reviewer }
+        dispatch(updateStuff(fields, productID, "deleteProductReview"));
+    };
+
+    const reviewer = currentUser && currentUser._id
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(fields);
-        dispatch(updateStuff(fields, productID, "ProductUpdate"));
-        setRating(0);
-        setComment('');
-    };
 
+        if (rating === 0) {
+            setMessage("Please select a rating.");
+            setShowPopup(true);
+        } else {
+            const fields = { rating, comment, reviewer };
+            dispatch(updateStuff(fields, productID, "addReview"));
+            setRating(0);
+            setComment('');
+        }
+    };
 
     useEffect(() => {
         if (status === "updated") {
             dispatch(getProductDetails(productID));
+            dispatch(underControl());
+        } else if (responseReview) {
+            setMessage("You have already submitted a review for this product.");
+            setShowPopup(true);
         } else if (error) {
             setMessage("Network Error");
             setShowPopup(true);
         }
-    }, [dispatch, productID, status, error]);
+    }, [dispatch, responseReview, productID, status, error]);
 
     return (
         <>
@@ -112,43 +136,82 @@ const ViewProduct = () => {
                                                     required
                                                 />
                                                 <Box sx={{ textAlign: 'right', width: '90%' }}>
-                                                    {/* Move the Submit button to the right side */}
                                                     <GreenButton type="submit">
                                                         Submit
                                                     </GreenButton>
                                                 </Box>
                                             </ReviewWritingContainer>
                                         </form>
-
-                                        <Typography variant="h4">Reviews</Typography>
-
-                                        {productDetails.reviews && productDetails.reviews.length > 0 && (
-                                            <ReviewContainer>
-                                                {productDetails.reviews.map((review, index) => (
-                                                    <ReviewCard key={index}>
-                                                        <ReviewCardDivision>
-                                                            <Avatar sx={{ width: "60px", height: "60px", marginRight: "1rem", backgroundColor: "#8970dc" }}>
-                                                                {String(review.reviewer.name).charAt(0)}
-                                                            </Avatar>
-                                                            <ReviewDetails>
-                                                                <Typography variant="h6">{review.reviewer.name}</Typography>
-                                                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                                            
-                                                                   <Typography variant="body2">
-                                                                        {timeAgo(review.date)}
-                                                                    </Typography>
-                                                                </div>
-                                                                <Typography variant="subtitle1">Rating: {review.rating}</Typography>
-                                                                <Typography variant="body1">{review.comment}</Typography>
-                                                            </ReviewDetails>
-                                                        </ReviewCardDivision>
-                                                    </ReviewCard>
-                                                ))}
-                                            </ReviewContainer>
-                                        )}
                                     </>
                                 }
+                                <ReviewWritingContainer>
+                                    <Typography variant="h4">Reviews</Typography>
+                                </ReviewWritingContainer>
 
+                                {productDetails.reviews && productDetails.reviews.length > 0 ? (
+                                    <ReviewContainer>
+                                        {productDetails.reviews.map((review, index) => (
+                                            <ReviewCard key={index}>
+                                                <ReviewCardDivision>
+                                                    <Avatar sx={{ width: "60px", height: "60px", marginRight: "1rem", backgroundColor: generateRandomColor(review._id) }}>
+                                                        {String(review.reviewer.name).charAt(0)}
+                                                    </Avatar>
+                                                    <ReviewDetails>
+                                                        <Typography variant="h6">{review.reviewer.name}</Typography>
+                                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+
+                                                            <Typography variant="body2">
+                                                                {timeAgo(review.date)}
+                                                            </Typography>
+                                                        </div>
+                                                        <Typography variant="subtitle1">Rating: {review.rating}</Typography>
+                                                        <Typography variant="body1">{review.comment}</Typography>
+                                                    </ReviewDetails>
+                                                    {review.reviewer._id === reviewer &&
+                                                        <>
+                                                            <IconButton onClick={handleOpenMenu} sx={{ width: "4rem", color: 'inherit', p: 0 }}>
+                                                                <MoreVert sx={{ fontSize: "2rem" }} />
+                                                            </IconButton>
+                                                            <Menu
+                                                                id="menu-appbar"
+                                                                anchorEl={anchorElMenu}
+                                                                anchorOrigin={{
+                                                                    vertical: 'bottom',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                                keepMounted
+                                                                transformOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                                open={Boolean(anchorElMenu)}
+                                                                onClose={handleCloseMenu}
+                                                                onClick={handleCloseMenu}
+                                                            >
+                                                                <MenuItem onClick={() => {
+                                                                    handleCloseMenu()
+                                                                }}>
+                                                                    <Typography textAlign="center">Edit</Typography>
+                                                                </MenuItem>
+                                                                <MenuItem onClick={() => {
+                                                                    deleteHandler(review._id)
+                                                                    handleCloseMenu()
+                                                                }}>
+                                                                    <Typography textAlign="center">Delete</Typography>
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </>
+                                                    }
+                                                </ReviewCardDivision>
+                                            </ReviewCard>
+                                        ))}
+                                    </ReviewContainer>
+                                )
+                                    :
+                                    <ReviewWritingContainer>
+                                        <Typography variant="h6">No Reviews Found. Add a review.</Typography>
+                                    </ReviewWritingContainer>
+                                }
                             </>
                     }
                 </>
