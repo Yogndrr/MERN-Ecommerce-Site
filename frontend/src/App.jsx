@@ -11,6 +11,8 @@ import Logout from './components/Logout';
 import Products from './components/Products';
 import { useEffect } from 'react';
 import { getProducts } from './redux/userHandle';
+import CustomerOrders from './pages/customer/pages/CustomerOrders';
+import CheckoutSteps from './pages/customer/pages/CheckoutSteps';
 
 const App = () => {
 
@@ -39,7 +41,7 @@ const App = () => {
 
             <Route path="/Search" element={<CustomerSearch mode="Mobile" />} />
             <Route path="/ProductSearch" element={<CustomerSearch mode="Desktop" />} />
-            
+
             <Route path="/Customerregister" element={<AuthenticationPage mode="Register" role="Customer" />} />
             <Route path="/Customerlogin" element={<AuthenticationPage mode="Login" role="Customer" />} />
             <Route path="/Sellerregister" element={<AuthenticationPage mode="Register" role="Seller" />} />
@@ -64,7 +66,10 @@ const App = () => {
             <Route path="/Search" element={<CustomerSearch mode="Mobile" />} />
             <Route path="/ProductSearch" element={<CustomerSearch mode="Desktop" />} />
 
+            <Route path="/Checkout" element={<CheckoutSteps />} />
+
             <Route path="/Profile" element={<Profile />} />
+            <Route path="/Orders" element={<CustomerOrders />} />
             <Route path="/Logout" element={<Logout />} />
           </Routes>
         </>

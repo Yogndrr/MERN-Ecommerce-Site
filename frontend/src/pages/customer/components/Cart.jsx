@@ -30,7 +30,6 @@ const Cart = ({ setIsCartOpen }) => {
 
     const handleAddToCart = (product) => {
         dispatch(addToCart(product));
-        console.log(cartDetails)
     };
 
     const handleRemoveAllFromCart = () => {

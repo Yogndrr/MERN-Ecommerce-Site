@@ -27,6 +27,7 @@ import Products from '../../components/Products';
 import { productDataList } from '../../utils/products';
 import ShopcartSpecial from './pages/ShopcartSpecial';
 import Profile from '../../components/Profile';
+import ShowCustomers from './pages/ShowCustomers';
 
 const SellerDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -161,6 +162,8 @@ const SellerDashboard = () => {
                         }
 
                         <Route path="/Seller/orders" element={<ShowOrders />} />
+                        <Route path="/Seller/orders/customers/:id" element={<ShowCustomers />} />
+                        <Route path="/Seller/orders/product/:id" element={<ViewProductSeller />} />
 
                         <Route path="/logout" element={<Logout />} />
                     </Routes>

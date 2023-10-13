@@ -20,6 +20,10 @@ import {
     getSellerProductsFailed,
     stuffUpdated,
     updateFailed,
+    getCustomersListFailed,
+    customersListSuccess,
+    getSpecificProductsFailed,
+    specificProductSuccess,
 } from './userSlice';
 
 export const authUser = (fields, role, mode) => async (dispatch) => {
@@ -125,7 +129,7 @@ export const updateStuff = (fields, id, address) => async (dispatch) => {
             headers: { 'Content-Type': 'application/json' },
         });
         if (result.data.message) {
-            dispatch(updateFailed(result.data));
+            dispatch(updateFailed(result.data.message));
         }
         else {
             dispatch(stuffUpdated());
@@ -142,7 +146,7 @@ export const getProductsbySeller = (id) => async (dispatch) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getSellerProducts/${id}`);
         if (result.data.message) {
-            dispatch(getSellerProductsFailed(result.data));
+            dispatch(getSellerProductsFailed(result.data.message));
         }
         else {
             dispatch(sellerProductSuccess(result.data));
@@ -158,7 +162,7 @@ export const getProducts = () => async (dispatch) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getProducts`);
         if (result.data.message) {
-            dispatch(getProductsFailed(result.data));
+            dispatch(getProductsFailed(result.data.message));
         }
         else {
             dispatch(productSuccess(result.data));
@@ -174,10 +178,43 @@ export const getProductDetails = (id) => async (dispatch) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/getProductDetail/${id}`);
         if (result.data.message) {
-            dispatch(getProductDetailsFailed(result.data));
+            dispatch(getProductDetailsFailed(result.data.message));
         }
         else {
             dispatch(productDetailsSuccess(result.data));
+        }
+
+    } catch (error) {
+        dispatch(getError(error));
+    }
+}
+
+export const getCustomers = (id, address) => async (dispatch) => {
+    dispatch(getRequest());
+
+    try {
+        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`);
+        if (result.data.message) {
+            dispatch(getCustomersListFailed(result.data.message));
+        }
+        else {
+            dispatch(customersListSuccess(result.data));
+        }
+
+    } catch (error) {
+        dispatch(getError(error));
+    }
+}
+
+export const getSpecificProducts = (id, address) => async (dispatch) => {
+    dispatch(getRequest());
+    try {
+        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`);
+        if (result.data.message) {
+            dispatch(getSpecificProductsFailed(result.data.message));
+        }
+        else {
+            dispatch(specificProductSuccess(result.data));
         }
 
     } catch (error) {
@@ -191,7 +228,7 @@ export const getSearchedProducts = (address, key) => async (dispatch) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${key}`);
         if (result.data.message) {
-            dispatch(getSearchFailed(result.data));
+            dispatch(getSearchFailed(result.data.message));
         }
         else {
             dispatch(setFilteredProducts(result.data));

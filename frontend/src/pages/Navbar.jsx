@@ -12,17 +12,18 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Login, Logout, Store } from '@mui/icons-material';
+import { Login, Logout, Shop2, Store } from '@mui/icons-material';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Badge, Divider, Drawer, ListItemIcon } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 import { NavLogo } from '../utils/styles';
 
 import Cart from './customer/components/Cart';
 import Search from './customer/components/Search';
 import ProductsMenu from './customer/components/ProductsMenu';
+import { updateCustomer } from '../redux/userHandle';
 
 const Navbar = () => {
     const { currentUser, currentRole } = useSelector(state => state.user);
@@ -30,6 +31,14 @@ const Navbar = () => {
     const totalQuantity = currentUser && currentUser.cartDetails && currentUser.cartDetails.reduce((total, item) => total + item.quantity, 0);
 
     const navigate = useNavigate()
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        if (currentRole === "Customer") {
+            console.log(currentUser);
+            dispatch(updateCustomer(currentUser, currentUser._id, "cartUpdate"));
+        }
+    }, [currentRole, currentUser, dispatch])
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -298,6 +307,14 @@ const Navbar = () => {
                                     <Avatar />
                                     <Link to="/Profile">
                                         Profile
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={() => navigate("/Orders")}>
+                                    <ListItemIcon>
+                                        <Shop2 fontSize="small" />
+                                    </ListItemIcon>
+                                    <Link to="/Orders">
+                                        My Orders
                                     </Link>
                                 </MenuItem>
                                 <Divider />

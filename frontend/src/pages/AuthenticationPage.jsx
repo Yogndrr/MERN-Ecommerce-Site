@@ -3,17 +3,15 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import bgpic from "../assets/designlogin.jpg"
 import { LightPurpleButton } from '../utils/buttonStyles';
 import { authUser } from '../redux/userHandle';
 import styled from 'styled-components';
 import Popup from '../components/Popup';
 
-const defaultTheme = createTheme();
-
 const AuthenticationPage = ({ mode, role }) => {
+
+    const bgpic = "https://img.freepik.com/free-vector/gradient-minimalist-background_23-2149976758.jpg?w=1060&t=st=1697182294~exp=1697182894~hmac=8f7c0475651a88880e5056dea6ab4e5f1da237fd53c093a90bdbc2578dd27693"
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -99,7 +97,7 @@ const AuthenticationPage = ({ mode, role }) => {
     }, [status, currentUser, currentRole, navigate, error, response]);
 
     return (
-        <ThemeProvider theme={defaultTheme}>
+        <>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -112,15 +110,15 @@ const AuthenticationPage = ({ mode, role }) => {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
+                        <StyledTypography>
                             {role} {mode}
-                        </Typography>
+                        </StyledTypography>
 
                         {role === "Seller" && mode === "Register" &&
                             <Typography variant="h7">
                                 Create your own shop by registering as an seller.
                                 <br />
-                                You will be able to add products sell them.
+                                You will be able to add products and sell them.
                             </Typography>
                         }
 
@@ -147,6 +145,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                     name="userName"
                                     autoComplete="name"
                                     autoFocus
+                                    variant="standard"
                                     error={userNameError}
                                     helperText={userNameError && 'Name is required'}
                                     onChange={handleInputChange}
@@ -161,6 +160,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                     label="Create your shop name"
                                     name="shopName"
                                     autoComplete="off"
+                                    variant="standard" 
                                     error={shopNameError}
                                     helperText={shopNameError && 'Shop name is required'}
                                     onChange={handleInputChange}
@@ -174,6 +174,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                 label="Enter your email"
                                 name="email"
                                 autoComplete="email"
+                                variant="standard" 
                                 error={emailError}
                                 helperText={emailError && 'Email is required'}
                                 onChange={handleInputChange}
@@ -187,6 +188,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                 type={toggle ? 'text' : 'password'}
                                 id="password"
                                 autoComplete="current-password"
+                                variant="standard" 
                                 error={passwordError}
                                 helperText={passwordError && 'Password is required'}
                                 onChange={handleInputChange}
@@ -257,7 +259,7 @@ const AuthenticationPage = ({ mode, role }) => {
                 />
             </Grid>
             <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
-        </ThemeProvider >
+        </>
     );
 }
 
@@ -267,4 +269,14 @@ const StyledLink = styled(Link)`
   margin-top: 9px;
   text-decoration: none;
   color: #7f56da;
+`;
+
+const StyledTypography = styled.h4`
+    margin: 0;
+    font-weight: 400;
+    font-size: 2.125rem;
+    line-height: 1.235;
+    letter-spacing: 0.00735em;
+    color: #2c2143;
+    margin-bottom: 16px;
 `;

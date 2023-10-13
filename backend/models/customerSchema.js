@@ -55,7 +55,27 @@ const customerSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'seller'
         },
-    }]
+    }],
+    shippingData: {
+        address: {
+            type: String,
+        },
+        city: {
+            type: String,
+        },
+        state: {
+            type: String,
+        },
+        country: {
+            type: String,
+        },
+        pinCode: {
+            type: Number,
+        },
+        phoneNo: {
+            type: Number,
+        },
+    }
 });
 
 module.exports = mongoose.model("customer", customerSchema)

@@ -12,13 +12,17 @@ const initialState = {
     responseReview: null,
     responseProducts: null,
     responseSellerProducts: null,
+    responseSpecificProducts: null,
     responseDetails: null,
     responseSearch: null,
+    responseCustomersList: null,
 
     filteredProducts: [],
     productData: [],
     sellerProductData: [],
+    specificProductData: [],
     productDetails: {},
+    customersList: [],
 };
 
 const updateCartDetailsInLocalStorage = (cartDetails) => {
@@ -120,6 +124,19 @@ const userSlice = createSlice({
             state.response = true;
         },
 
+        getRequest: (state) => {
+            state.loading = true;
+        },
+        getFailed: (state, action) => {
+            state.response = action.payload;
+            state.loading = false;
+            state.error = null;
+        },
+        getError: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+
         doneSuccess: (state, action) => {
             state.userDetails = action.payload;
             state.loading = false;
@@ -133,24 +150,9 @@ const userSlice = createSlice({
             state.response = null;
         },
 
-        getRequest: (state) => {
-            state.loading = true;
-        },
         productSuccess: (state, action) => {
             state.productData = action.payload;
             state.responseProducts = null;
-            state.loading = false;
-            state.error = null;
-        },
-        sellerProductSuccess: (state, action) => {
-            state.sellerProductData = action.payload;
-            state.responseSellerProducts = null;
-            state.loading = false;
-            state.error = null;
-        },
-        productDetailsSuccess: (state, action) => {
-            state.productDetails = action.payload;
-            state.responseDetails = null;
             state.loading = false;
             state.error = null;
         },
@@ -159,8 +161,34 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
+
+        sellerProductSuccess: (state, action) => {
+            state.sellerProductData = action.payload;
+            state.responseSellerProducts = null;
+            state.loading = false;
+            state.error = null;
+        },
         getSellerProductsFailed: (state, action) => {
             state.responseSellerProducts = action.payload;
+            state.loading = false;
+            state.error = null;
+        },
+
+        specificProductSuccess: (state, action) => {
+            state.specificProductData = action.payload;
+            state.responseSpecificProducts = null;
+            state.loading = false;
+            state.error = null;
+        },
+        getSpecificProductsFailed: (state, action) => {
+            state.responseSpecificProducts = action.payload;
+            state.loading = false;
+            state.error = null;
+        },
+
+        productDetailsSuccess: (state, action) => {
+            state.productDetails = action.payload;
+            state.responseDetails = null;
             state.loading = false;
             state.error = null;
         },
@@ -169,23 +197,28 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
-        getFailed: (state, action) => {
-            state.response = action.payload;
+
+        customersListSuccess: (state, action) => {
+            state.customersList = action.payload;
+            state.responseCustomersList = null;
             state.loading = false;
             state.error = null;
         },
-        getError: (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        },
-        getSearchFailed: (state, action) => {
-            state.responseSearch = action.payload;
+
+        getCustomersListFailed: (state, action) => {
+            state.responseCustomersList = action.payload;
             state.loading = false;
             state.error = null;
         },
+
         setFilteredProducts: (state, action) => {
             state.filteredProducts = action.payload;
             state.responseSearch = null;
+            state.loading = false;
+            state.error = null;
+        },
+        getSearchFailed: (state, action) => {
+            state.responseSearch = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -215,6 +248,10 @@ export const {
     getError,
     getSearchFailed,
     setFilteredProducts,
+    getCustomersListFailed,
+    customersListSuccess,
+    getSpecificProductsFailed,
+    specificProductSuccess,
 
     addToCart,
     removeFromCart,
