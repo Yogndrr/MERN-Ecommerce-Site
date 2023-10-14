@@ -4,6 +4,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
+import { Box, Button } from '@mui/material';
 
 const products = [
     {
@@ -37,7 +38,13 @@ const payments = [
     { name: 'Expiry date', detail: '04/2024' },
 ];
 
-const OrderSummary = () => {
+const OrderSummary = ({ handleNext, handleBack }) => {
+
+    const handleSubmit = () => {
+        console.log("OrderSummary");
+        handleNext()
+    }
+
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
@@ -83,6 +90,18 @@ const OrderSummary = () => {
                     </Grid>
                 </Grid>
             </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                    Back
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    sx={{ mt: 3, ml: 1 }}
+                >
+                    Place order
+                </Button>
+            </Box>
         </React.Fragment>
     );
 }

@@ -13,7 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { AppBar, Drawer, NavLogo } from '../../utils/styles';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-import Logout from '../../components/Logout';
+import Logout from '../Logout';
 import SideBar from './components/SideBar';
 import SellerHomePage from './pages/SellerHomePage';
 
@@ -26,8 +26,8 @@ import { useSelector } from 'react-redux';
 import Products from '../../components/Products';
 import { productDataList } from '../../utils/products';
 import ShopcartSpecial from './pages/ShopcartSpecial';
-import Profile from '../../components/Profile';
 import ShowCustomers from './pages/ShowCustomers';
+import SellerProfile from './pages/SellerProfile';
 
 const SellerDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -146,7 +146,7 @@ const SellerDashboard = () => {
                         <Route path="/" element={<SellerHomePage />} />
                         <Route path='*' element={<Navigate to="/" />} />
                         <Route path="/Seller/dashboard" element={<SellerHomePage />} />
-                        <Route path="/Seller/profile" element={<Profile />} />
+                        <Route path="/Seller/profile" element={<SellerProfile />} />
 
                         {/* Class */}
                         <Route path="/Seller/addproduct" element={<AddProduct />} />

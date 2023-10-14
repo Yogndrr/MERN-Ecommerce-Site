@@ -2,17 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import Home from './pages/Home'
 import ViewProduct from './pages/ViewProduct'
-import Profile from './components/Profile'
 import Navbar from './pages/Navbar'
 import AuthenticationPage from './pages/AuthenticationPage'
 import SellerDashboard from './pages/seller/SellerDashboard'
 import CustomerSearch from './pages/customer/pages/CustomerSearch'
-import Logout from './components/Logout';
 import Products from './components/Products';
 import { useEffect } from 'react';
 import { getProducts } from './redux/userHandle';
 import CustomerOrders from './pages/customer/pages/CustomerOrders';
 import CheckoutSteps from './pages/customer/pages/CheckoutSteps';
+import Profile from './pages/customer/pages/Profile';
+import Logout from './pages/Logout';
 
 const App = () => {
 

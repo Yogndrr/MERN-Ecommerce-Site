@@ -47,16 +47,15 @@ const Cart = ({ setIsCartOpen }) => {
 
     const productBuyingHandler = () => {
         console.log(currentUser);
-        dispatch(updateCustomer(currentUser, currentUser._id, "cartUpdate"));
+        dispatch(updateCustomer(currentUser, currentUser._id));
         setMessage("Order Done Successfully")
         setShowPopup(true)
     }
 
     const allProductsBuyingHandler = () => {
         console.log(currentUser);
-        dispatch(updateCustomer(currentUser, currentUser._id, "cartUpdate"));
-        setMessage("Order Done Successfully")
-        setShowPopup(true)
+        dispatch(updateCustomer(currentUser, currentUser._id));
+        navigate("/Checkout")
     }
 
     const priceContainerRef = useRef(null);

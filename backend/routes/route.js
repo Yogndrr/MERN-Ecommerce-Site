@@ -26,7 +26,6 @@ const {
 const {
     customerRegister,
     customerLogIn,
-    getCustomerDetail,
     getCartDetail,
     cartUpdate
 } = require('../controllers/customerController.js');
@@ -58,8 +57,7 @@ router.delete('/deleteAllProductReviews/:id', deleteAllProductReviews);
 // Customer
 router.post('/CustomerRegister', customerRegister);
 router.post('/CustomerLogin', customerLogIn);
-router.get('/getCustomerDetail/:id', getCustomerDetail);
 router.get('/getCartDetail/:id', getCartDetail);
-router.put('/cartUpdate/:id', cartUpdate);
+router.put('/CustomerUpdate/:id', cartUpdate);
 
 module.exports = router;

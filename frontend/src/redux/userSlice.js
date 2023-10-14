@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     status: 'idle',
-    userDetails: [],
     loading: false,
     currentUser: JSON.parse(localStorage.getItem('user')) || null,
     currentRole: (JSON.parse(localStorage.getItem('user')) || {}).role || null,
@@ -17,11 +16,11 @@ const initialState = {
     responseSearch: null,
     responseCustomersList: null,
 
-    filteredProducts: [],
     productData: [],
     sellerProductData: [],
     specificProductData: [],
     productDetails: {},
+    filteredProducts: [],
     customersList: [],
 };
 
@@ -29,6 +28,15 @@ const updateCartDetailsInLocalStorage = (cartDetails) => {
     const currentUser = JSON.parse(localStorage.getItem('user')) || {};
     currentUser.cartDetails = cartDetails;
     localStorage.setItem('user', JSON.stringify(currentUser));
+};
+
+export const updateShippingDataInLocalStorage = (shippingData) => {
+    const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+    const updatedUser = {
+        ...currentUser,
+        shippingData: shippingData
+    };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
 };
 
 const userSlice = createSlice({
@@ -56,6 +64,10 @@ const userSlice = createSlice({
             state.status = 'failed';
             state.responseReview = action.payload;
             state.error = null;
+        },
+        updateCurrentUser: (state, action) => {
+            state.currentUser = action.payload;
+            localStorage.setItem('user', JSON.stringify(action.payload));
         },
         authSuccess: (state, action) => {
             state.status = 'success';
@@ -137,12 +149,6 @@ const userSlice = createSlice({
             state.error = action.payload;
         },
 
-        doneSuccess: (state, action) => {
-            state.userDetails = action.payload;
-            state.loading = false;
-            state.error = null;
-            state.response = null;
-        },
         getDeleteSuccess: (state) => {
             state.status = 'deleted';
             state.loading = false;
@@ -256,6 +262,7 @@ export const {
     addToCart,
     removeFromCart,
     removeAllFromCart,
+    updateCurrentUser
 } = userSlice.actions;
 
 export const userReducer = userSlice.reducer;

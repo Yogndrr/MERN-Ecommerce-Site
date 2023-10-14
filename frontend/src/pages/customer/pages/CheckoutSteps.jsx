@@ -1,33 +1,23 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import ShippingPage from '../components/ShippingPage';
 import PaymentForm from '../components/PaymentForm';
 import OrderSummary from '../components/OrderSummary';
+import { LightPurpleButton } from '../../../utils/buttonStyles';
+import { KeyboardDoubleArrowLeft } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-const getStepContent = (step) => {
-    switch (step) {
-        case 0:
-            return <ShippingPage />;
-        case 1:
-            return <PaymentForm />;
-        case 2:
-            return <OrderSummary />;
-        default:
-            throw new Error('Unknown step');
-    }
-}
-
 const CheckoutSteps = () => {
+    const navigate = useNavigate();
+
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleNext = () => {
@@ -62,25 +52,23 @@ const CheckoutSteps = () => {
                                 confirmation, and will send you an update when your order has
                                 shipped.
                             </Typography>
+                            <LightPurpleButton onClick={() => {
+                                navigate("/")
+                            }}>
+                                <KeyboardDoubleArrowLeft /> Continue Shopping
+                            </LightPurpleButton>
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
-                            {getStepContent(activeStep)}
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                {activeStep !== 0 && (
-                                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                                        Back
-                                    </Button>
-                                )}
-
-                                <Button
-                                    variant="contained"
-                                    onClick={handleNext}
-                                    sx={{ mt: 3, ml: 1 }}
-                                >
-                                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                                </Button>
-                            </Box>
+                            {activeStep === 0 &&
+                                <ShippingPage handleNext={handleNext} />
+                            }
+                            {activeStep === 1 &&
+                                <PaymentForm handleNext={handleNext} handleBack={handleBack} />
+                            }
+                            {activeStep === 2 &&
+                                <OrderSummary handleNext={handleNext} handleBack={handleBack} />
+                            }
                         </React.Fragment>
                     )}
                 </Paper>

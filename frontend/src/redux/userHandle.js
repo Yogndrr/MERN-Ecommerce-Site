@@ -5,7 +5,6 @@ import {
     authFailed,
     authError,
     stuffAdded,
-    doneSuccess,
     getDeleteSuccess,
     getRequest,
     getFailed,
@@ -24,6 +23,7 @@ import {
     customersListSuccess,
     getSpecificProductsFailed,
     specificProductSuccess,
+    updateCurrentUser,
 } from './userSlice';
 
 export const authUser = (fields, role, mode) => async (dispatch) => {
@@ -44,14 +44,37 @@ export const authUser = (fields, role, mode) => async (dispatch) => {
     }
 };
 
-export const getUserDetails = (id, address) => async (dispatch) => {
-    dispatch(getRequest());
+export const addStuff = (address, fields) => async (dispatch) => {
+    dispatch(authRequest());
 
     try {
-        const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`);
-        if (result.data) {
-            dispatch(doneSuccess(result.data));
+        const result = await axios.post(`${process.env.REACT_APP_BASE_URL}/${address}`, fields, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (result.data.message) {
+            dispatch(authFailed(result.data.message));
+        } else {
+            dispatch(stuffAdded());
         }
+    } catch (error) {
+        dispatch(authError(error));
+    }
+};
+
+export const updateStuff = (fields, id, address) => async (dispatch) => {
+
+    try {
+        const result = await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+        if (result.data.message) {
+            dispatch(updateFailed(result.data.message));
+        }
+        else {
+            dispatch(stuffUpdated());
+        }
+
     } catch (error) {
         dispatch(getError(error));
     }
@@ -72,68 +95,14 @@ export const deleteStuff = (id, address) => async (dispatch) => {
     }
 }
 
-export const updateUser = (fields, id, address) => async (dispatch) => {
-    dispatch(getRequest());
-
+export const updateCustomer = (fields, id) => async (dispatch) => {
+    dispatch(updateCurrentUser(fields));
     try {
-        const result = await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (result.data.shopName) {
-            dispatch(authSuccess(result.data));
-        }
-        else {
-            dispatch(doneSuccess(result.data));
-        }
-    } catch (error) {
-        dispatch(getError(error));
-    }
-}
-
-export const addStuff = (address, fields) => async (dispatch) => {
-    dispatch(authRequest());
-
-    try {
-        const result = await axios.post(`${process.env.REACT_APP_BASE_URL}/${address}`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (result.data.message) {
-            dispatch(authFailed(result.data.message));
-        } else {
-            dispatch(stuffAdded());
-        }
-    } catch (error) {
-        dispatch(authError(error));
-    }
-};
-
-export const updateCustomer = (fields, id, address) => async (dispatch) => {
-
-    try {
-        await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
+        await axios.put(`${process.env.REACT_APP_BASE_URL}/CustomerUpdate/${id}`, fields, {
             headers: { 'Content-Type': 'application/json' },
         });
 
         dispatch(stuffUpdated());
-
-    } catch (error) {
-        dispatch(getError(error));
-    }
-}
-
-export const updateStuff = (fields, id, address) => async (dispatch) => {
-
-    try {
-        const result = await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (result.data.message) {
-            dispatch(updateFailed(result.data.message));
-        }
-        else {
-            dispatch(stuffUpdated());
-        }
 
     } catch (error) {
         dispatch(getError(error));

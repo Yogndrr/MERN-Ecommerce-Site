@@ -19,6 +19,7 @@ const customerRegister = async (req, res) => {
         else {
             let result = await customer.save();
             result.password = undefined;
+            result.shippingData = undefined;
 
             res.send(result);
         }
@@ -46,21 +47,6 @@ const customerLogIn = async (req, res) => {
         res.send({ message: "Email and password are required" });
     }
 };
-
-const getCustomerDetail = async (req, res) => {
-    try {
-        let customer = await Customer.findById(req.params.id)
-        if (customer) {
-            customer.password = undefined;
-            res.send(customer);
-        }
-        else {
-            res.send({ message: "No customer found" });
-        }
-    } catch (err) {
-        res.status(500).json(err);
-    }
-}
 
 const getCartDetail = async (req, res) => {
     try {
@@ -92,7 +78,6 @@ const cartUpdate = async (req, res) => {
 module.exports = {
     customerRegister,
     customerLogIn,
-    getCustomerDetail,
     getCartDetail,
     cartUpdate,
 };
