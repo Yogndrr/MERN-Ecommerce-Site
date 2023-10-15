@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const authMiddleware = require('../middleware/authMiddleware.js');
 
 const {
     sellerRegister,
@@ -30,6 +31,8 @@ const {
     cartUpdate
 } = require('../controllers/customerController.js');
 
+const { newOrder } = require('../controllers/orderController.js');
+
 // Seller
 router.post('/SellerRegister', sellerRegister);
 router.post('/SellerLogin', sellerLogIn);
@@ -59,5 +62,8 @@ router.post('/CustomerRegister', customerRegister);
 router.post('/CustomerLogin', customerLogIn);
 router.get('/getCartDetail/:id', getCartDetail);
 router.put('/CustomerUpdate/:id', cartUpdate);
+
+// Order
+router.post('/newOrder', newOrder);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const Seller = require('../models/sellerSchema.js');
+const { createNewToken } = require('../utils/token.js');
 
 const sellerRegister = async (req, res) => {
     try {
@@ -23,6 +24,14 @@ const sellerRegister = async (req, res) => {
         else {
             let result = await seller.save();
             result.password = undefined;
+
+            const token = createNewToken(result._id)
+
+            result = {
+                ...result._doc,
+                token: token
+            };
+
             res.send(result);
         }
     } catch (err) {
@@ -37,6 +46,14 @@ const sellerLogIn = async (req, res) => {
             const validated = await bcrypt.compare(req.body.password, seller.password);
             if (validated) {
                 seller.password = undefined;
+
+                const token = createNewToken(seller._id)
+
+                seller = {
+                    ...seller._doc,
+                    token: token
+                };
+
                 res.send(seller);
             } else {
                 res.send({ message: "Invalid password" });

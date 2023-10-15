@@ -6,12 +6,14 @@ import { Box, Button, Collapse, Stack, styled } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCustomer } from '../../../redux/userHandle';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { BlueButton } from '../../../utils/buttonStyles';
+import { BlueButton, GreenButton } from '../../../utils/buttonStyles';
+import { useNavigate } from 'react-router-dom';
 
 const ShippingPage = ({ handleNext, profile }) => {
   const { currentUser } = useSelector(state => state.user);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   let shippingData = currentUser.shippingData;
 
@@ -95,6 +97,9 @@ const ShippingPage = ({ handleNext, profile }) => {
   const [state, setState] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
 
+  const [pinCodeError, setPinCodeError] = useState(false);
+  const [phoneNoError, setPhoneNoError] = useState(false);
+
   useEffect(() => {
     if (shippingData) {
       setAddress(shippingData.address || '');
@@ -124,9 +129,21 @@ const ShippingPage = ({ handleNext, profile }) => {
     }
   };
 
-  const editHandler = () => {
-    const fields = { address, city, state, country, pinCode, phoneNo }
-    updateShippingData(fields);
+  const editHandler = (event) => {
+    event.preventDefault()
+    if (isNaN(pinCode) || pinCode.length !== 6) {
+      setPinCodeError(true)
+    }
+    else if (isNaN(phoneNo) || phoneNo.length !== 10) {
+      setPhoneNoError(true)
+    }
+    else {
+      setPinCodeError(false)
+      setPhoneNoError(false)
+      const fields = { address, city, state, country, pinCode, phoneNo }
+      updateShippingData(fields);
+      setShowTab(false)
+    }
   };
 
   return (
@@ -164,7 +181,13 @@ const ShippingPage = ({ handleNext, profile }) => {
                 </Button>
               </Box>
               :
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <GreenButton
+                  onClick={() => navigate("/profile")}
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  Change
+                </GreenButton>
                 <Button
                   variant="contained"
                   onClick={handleNext}
@@ -220,6 +243,8 @@ const ShippingPage = ({ handleNext, profile }) => {
                         label="Zip / Postal code"
                         type='number'
                         value={pinCode}
+                        error={pinCodeError}
+                        helperText={pinCodeError && 'Pin Code should be a 6-digit number'}
                         onChange={(event) => setPinCode(event.target.value)}
                         required
                         InputLabelProps={{
@@ -251,6 +276,8 @@ const ShippingPage = ({ handleNext, profile }) => {
                         label="Phone number"
                         type='number'
                         value={phoneNo}
+                        error={phoneNoError}
+                        helperText={phoneNoError && 'Phone Number should be a 10-digit number'}
                         onChange={(event) => setPhoneNo(event.target.value)}
                         required
                         InputLabelProps={{

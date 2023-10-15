@@ -5,101 +5,130 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import { Box, Button } from '@mui/material';
-
-const products = [
-    {
-        name: 'Product 1',
-        desc: 'A nice thing',
-        price: '$9.99',
-    },
-    {
-        name: 'Product 2',
-        desc: 'Another thing',
-        price: '$3.45',
-    },
-    {
-        name: 'Product 3',
-        desc: 'Something else',
-        price: '$6.51',
-    },
-    {
-        name: 'Product 4',
-        desc: 'Best thing of all',
-        price: '$14.11',
-    },
-    { name: 'Shipping', desc: '', price: 'Free' },
-];
-
-const addresses = ['1 MUI Drive', 'Reactville', 'Anytown', '99999', 'USA'];
-const payments = [
-    { name: 'Card type', detail: 'Visa' },
-    { name: 'Card holder', detail: 'Mr John Smith' },
-    { name: 'Card number', detail: 'xxxx-xxxx-xxxx-1234' },
-    { name: 'Expiry date', detail: '04/2024' },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getProductDetails } from '../../../redux/userHandle';
 
 const OrderSummary = ({ handleNext, handleBack }) => {
 
-    const handleSubmit = () => {
-        console.log("OrderSummary");
-        handleNext()
-    }
+    const dispatch = useDispatch();
+
+    const params = useParams();
+    const productID = params.id;
+
+    const { currentUser, productDetails } = useSelector((state) => state.user);
+
+    React.useEffect(() => {
+        if (productID) {
+            dispatch(getProductDetails(productID));
+        }
+    }, [productID, dispatch]);
+
+    let cartDetails = currentUser.cartDetails;
+    let shippingData = currentUser.shippingData;
+
+    const totalQuantity = cartDetails.reduce((total, item) => total + item.quantity, 0);
+    const totalOGPrice = cartDetails.reduce((total, item) => total + (item.quantity * item.price.mrp), 0);
+    const totalNewPrice = cartDetails.reduce((total, item) => total + (item.quantity * item.price.cost), 0);
 
     return (
         <React.Fragment>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" sx={{ fontWeight: 700 }} gutterBottom>
                 Order summary
             </Typography>
-            <List disablePadding>
-                {products.map((product) => (
-                    <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
-                        <ListItemText primary={product.name} secondary={product.desc} />
-                        <Typography variant="body2">{product.price}</Typography>
-                    </ListItem>
-                ))}
-                <ListItem sx={{ py: 1, px: 0 }}>
-                    <ListItemText primary="Total" />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                        $34.06
-                    </Typography>
-                </ListItem>
-            </List>
-            <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                        Shipping
-                    </Typography>
-                    <Typography gutterBottom>John Smith</Typography>
-                    <Typography gutterBottom>{addresses.join(', ')}</Typography>
-                </Grid>
-                <Grid item container direction="column" xs={12} sm={6}>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                        Payment details
-                    </Typography>
-                    <Grid container>
-                        {payments.map((payment) => (
-                            <React.Fragment key={payment.name}>
-                                <Grid item xs={6}>
-                                    <Typography gutterBottom>{payment.name}</Typography>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Typography gutterBottom>{payment.detail}</Typography>
-                                </Grid>
-                            </React.Fragment>
-                        ))}
+            {productID ?
+                <React.Fragment>
+                    <List disablePadding>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary={productDetails.productName} secondary={`Quantity: ${productDetails.quantity}`} />
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                                {`₹${productDetails.price && productDetails.price.mrp * productDetails.quantity}`}
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Discount" />
+                            <Typography variant="subtitle1" sx={{ color: "green" }}>
+                                ₹{productDetails.price && productDetails.price.mrp - productDetails.price.cost}
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Shipping" />
+                            <Typography variant="body2">
+                                Free
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Total Amount" />
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                                ₹{productDetails.price && productDetails.price.cost * productDetails.quantity}
+                            </Typography>
+                        </ListItem>
+                    </List>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Typography variant="h6" gutterBottom sx={{ mt: 2, fontWeight: 700 }}>
+                                Shipping
+                            </Typography>
+                            <Typography gutterBottom>{currentUser.name}</Typography>
+                            <Typography gutterBottom>{shippingData.address},{shippingData.city},{shippingData.state},{shippingData.country}</Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Grid>
+                </React.Fragment>
+                :
+                <React.Fragment>
+                    <List disablePadding>
+                        {cartDetails.map((product, index) => (
+                            <ListItem key={index} sx={{ py: 1, px: 0 }}>
+                                <ListItemText primary={product.productName} secondary={`Quantity: ${product.quantity}`} />
+                                <Typography variant="body2">{`₹${product.quantity * product.price.mrp}`}</Typography>
+                            </ListItem>
+                        ))}
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary={`Price (${totalQuantity} items)`} />
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                                ₹{totalOGPrice}
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Discount" />
+                            <Typography variant="subtitle1" sx={{ color: "green" }}>
+                                ₹{totalOGPrice - totalNewPrice}
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Shipping" />
+                            <Typography variant="body2">
+                                Free
+                            </Typography>
+                        </ListItem>
+                        <ListItem sx={{ py: 1, px: 0 }}>
+                            <ListItemText primary="Total Amount" />
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                                ₹{totalNewPrice}
+                            </Typography>
+                        </ListItem>
+                    </List>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Typography variant="h6" gutterBottom sx={{ mt: 2, fontWeight: 700 }}>
+                                Shipping
+                            </Typography>
+                            <Typography gutterBottom>{currentUser.name}</Typography>
+                            <Typography gutterBottom>{shippingData.address},{shippingData.city},{shippingData.state},{shippingData.country}</Typography>
+                        </Grid>
+                    </Grid>
+                </React.Fragment>
+            }
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
                     Back
                 </Button>
                 <Button
                     variant="contained"
-                    onClick={handleSubmit}
+                    onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
                 >
-                    Place order
+                    Next
                 </Button>
             </Box>
         </React.Fragment>

@@ -1,13 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
+import jwtDecode from 'jwt-decode';
 
 const initialState = {
     status: 'idle',
     loading: false,
     currentUser: JSON.parse(localStorage.getItem('user')) || null,
     currentRole: (JSON.parse(localStorage.getItem('user')) || {}).role || null,
+    currentToken: (JSON.parse(localStorage.getItem('user')) || {}).token || null,
+    isLoggedIn: false,
     error: null,
-
     response: null,
+
     responseReview: null,
     responseProducts: null,
     responseSellerProducts: null,
@@ -70,12 +73,14 @@ const userSlice = createSlice({
             localStorage.setItem('user', JSON.stringify(action.payload));
         },
         authSuccess: (state, action) => {
-            state.status = 'success';
+            localStorage.setItem('user', JSON.stringify(action.payload));
             state.currentUser = action.payload;
             state.currentRole = action.payload.role;
-            localStorage.setItem('user', JSON.stringify(action.payload));
+            state.currentToken = action.payload.token;
+            state.status = 'success';
             state.response = null;
             state.error = null;
+            state.isLoggedIn = true;
         },
         addToCart: (state, action) => {
             const existingProduct = state.currentUser.cartDetails.find(
@@ -132,8 +137,27 @@ const userSlice = createSlice({
             state.loading = false;
             state.currentUser = null;
             state.currentRole = null;
+            state.currentToken = null;
             state.error = null;
             state.response = true;
+            state.isLoggedIn = false;
+        },
+
+        isTokenValid: (state) => {
+            const decodedToken = jwtDecode(state.currentToken);
+
+            if (state.currentToken && decodedToken.exp * 1000 > Date.now()) {
+                state.isLoggedIn = true;
+            } else {
+                localStorage.removeItem('user');
+                state.currentUser = null;
+                state.currentRole = null;
+                state.currentToken = null;
+                state.status = 'idle';
+                state.response = null;
+                state.error = null;
+                state.isLoggedIn = false;
+            }
         },
 
         getRequest: (state) => {
@@ -241,6 +265,7 @@ export const {
     authFailed,
     authError,
     authLogout,
+    isTokenValid,
     doneSuccess,
     getDeleteSuccess,
     getRequest,
@@ -262,7 +287,7 @@ export const {
     addToCart,
     removeFromCart,
     removeAllFromCart,
-    updateCurrentUser
+    updateCurrentUser,
 } = userSlice.actions;
 
 export const userReducer = userSlice.reducer;

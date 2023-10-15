@@ -97,8 +97,12 @@ export const deleteStuff = (id, address) => async (dispatch) => {
 
 export const updateCustomer = (fields, id) => async (dispatch) => {
     dispatch(updateCurrentUser(fields));
+
+    const newFields = { ...fields };
+    delete newFields.token;
+
     try {
-        await axios.put(`${process.env.REACT_APP_BASE_URL}/CustomerUpdate/${id}`, fields, {
+        await axios.put(`${process.env.REACT_APP_BASE_URL}/CustomerUpdate/${id}`, newFields, {
             headers: { 'Content-Type': 'application/json' },
         });
 

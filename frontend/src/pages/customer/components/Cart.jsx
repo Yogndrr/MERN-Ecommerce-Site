@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Container, Divider, Grid, IconButton, Paper, Typography } from '@mui/material';
 import styled from 'styled-components';
@@ -9,7 +9,6 @@ import { addToCart, removeAllFromCart, removeFromCart } from '../../../redux/use
 import { BasicButton, LightPurpleButton } from '../../../utils/buttonStyles';
 import { useNavigate } from 'react-router-dom';
 import { updateCustomer } from '../../../redux/userHandle';
-import Popup from '../../../components/Popup';
 
 const Cart = ({ setIsCartOpen }) => {
 
@@ -18,9 +17,6 @@ const Cart = ({ setIsCartOpen }) => {
     const navigate = useNavigate();
 
     const { currentUser } = useSelector((state) => state.user);
-
-    const [showPopup, setShowPopup] = useState(false);
-    const [message, setMessage] = useState("");
 
     let cartDetails = currentUser.cartDetails;
 
@@ -45,16 +41,17 @@ const Cart = ({ setIsCartOpen }) => {
         setIsCartOpen(false)
     }
 
-    const productBuyingHandler = () => {
+    const productBuyingHandler = (id) => {
         console.log(currentUser);
         dispatch(updateCustomer(currentUser, currentUser._id));
-        setMessage("Order Done Successfully")
-        setShowPopup(true)
+        setIsCartOpen(false)
+        navigate(`/product/buy/${id}`)
     }
 
     const allProductsBuyingHandler = () => {
         console.log(currentUser);
         dispatch(updateCustomer(currentUser, currentUser._id));
+        setIsCartOpen(false)
         navigate("/Checkout")
     }
 
@@ -148,7 +145,7 @@ const Cart = ({ setIsCartOpen }) => {
                                             variant="contained"
                                             color="success"
                                             sx={{ mt: 2 }}
-                                            onClick={productBuyingHandler}
+                                            onClick={() => productBuyingHandler(data._id)}
                                         >
                                             Buy
                                         </Button>
@@ -200,8 +197,6 @@ const Cart = ({ setIsCartOpen }) => {
                     </Button>
                 </BottomContainer>
             )}
-
-            <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
 
         </StyledContainer>
     );

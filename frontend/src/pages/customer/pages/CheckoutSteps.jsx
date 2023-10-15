@@ -9,14 +9,10 @@ import Typography from '@mui/material/Typography';
 import ShippingPage from '../components/ShippingPage';
 import PaymentForm from '../components/PaymentForm';
 import OrderSummary from '../components/OrderSummary';
-import { LightPurpleButton } from '../../../utils/buttonStyles';
-import { KeyboardDoubleArrowLeft } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Shipping address', 'Review your order', 'Payment details',];
 
 const CheckoutSteps = () => {
-    const navigate = useNavigate();
 
     const [activeStep, setActiveStep] = React.useState(0);
 
@@ -42,35 +38,17 @@ const CheckoutSteps = () => {
                             </Step>
                         ))}
                     </Stepper>
-                    {activeStep === steps.length ? (
-                        <React.Fragment>
-                            <Typography variant="h5" gutterBottom>
-                                Thank you for your order.
-                            </Typography>
-                            <Typography variant="subtitle1">
-                                Your order number is #2001539. We have emailed your order
-                                confirmation, and will send you an update when your order has
-                                shipped.
-                            </Typography>
-                            <LightPurpleButton onClick={() => {
-                                navigate("/")
-                            }}>
-                                <KeyboardDoubleArrowLeft /> Continue Shopping
-                            </LightPurpleButton>
-                        </React.Fragment>
-                    ) : (
                         <React.Fragment>
                             {activeStep === 0 &&
                                 <ShippingPage handleNext={handleNext} />
                             }
                             {activeStep === 1 &&
-                                <PaymentForm handleNext={handleNext} handleBack={handleBack} />
-                            }
-                            {activeStep === 2 &&
                                 <OrderSummary handleNext={handleNext} handleBack={handleBack} />
                             }
+                            {activeStep === 2 &&
+                                <PaymentForm handleBack={handleBack} />
+                            }
                         </React.Fragment>
-                    )}
                 </Paper>
             </Container>
         </React.Fragment>

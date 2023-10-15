@@ -13,20 +13,26 @@ import CustomerOrders from './pages/customer/pages/CustomerOrders';
 import CheckoutSteps from './pages/customer/pages/CheckoutSteps';
 import Profile from './pages/customer/pages/Profile';
 import Logout from './pages/Logout';
+import { isTokenValid } from './redux/userSlice';
+import CheckoutAftermath from './pages/customer/pages/CheckoutAftermath';
 
 const App = () => {
 
   const dispatch = useDispatch()
 
-  const { currentRole, productData } = useSelector(state => state.user);
+  const { isLoggedIn, currentToken, currentRole, productData } = useSelector(state => state.user);
 
   useEffect(() => {
     dispatch(getProducts());
-  }, [dispatch])
+
+    if (currentToken) {
+      dispatch(isTokenValid());
+    }
+  }, [dispatch, currentToken]);
 
   return (
     <BrowserRouter>
-      {currentRole === null &&
+      {(!isLoggedIn && currentRole === null) &&
         <>
           <Navbar />
 
@@ -50,7 +56,7 @@ const App = () => {
         </>
       }
 
-      {currentRole === "Customer" &&
+      {(isLoggedIn && currentRole === "Customer") &&
         <>
           <Navbar />
 
@@ -67,6 +73,8 @@ const App = () => {
             <Route path="/ProductSearch" element={<CustomerSearch mode="Desktop" />} />
 
             <Route path="/Checkout" element={<CheckoutSteps />} />
+            <Route path="/product/buy/:id" element={<CheckoutSteps />} />
+            <Route path="/Aftermath" element={<CheckoutAftermath />} />
 
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Orders" element={<CustomerOrders />} />
@@ -75,7 +83,7 @@ const App = () => {
         </>
       }
 
-      {(currentRole === "Seller" || currentRole === "Shopcart") && (
+      {(isLoggedIn && (currentRole === "Seller" || currentRole === "Shopcart")) && (
         <>
           <SellerDashboard />
         </>

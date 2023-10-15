@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const Customer = require('../models/customerSchema.js');
+const { createNewToken } = require('../utils/token.js');
 
 const customerRegister = async (req, res) => {
     try {
@@ -19,7 +20,13 @@ const customerRegister = async (req, res) => {
         else {
             let result = await customer.save();
             result.password = undefined;
-            result.shippingData = undefined;
+            
+            const token = createNewToken(result._id)
+
+            result = {
+                ...result._doc,
+                token: token
+            };
 
             res.send(result);
         }
@@ -35,6 +42,13 @@ const customerLogIn = async (req, res) => {
             const validated = await bcrypt.compare(req.body.password, customer.password);
             if (validated) {
                 customer.password = undefined;
+
+                const token = createNewToken(customer._id)
+
+                customer = {
+                    ...customer._doc,
+                    token: token
+                };
 
                 res.send(customer);
             } else {
