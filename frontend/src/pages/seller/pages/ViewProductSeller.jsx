@@ -44,6 +44,8 @@ const ViewProductSeller = () => {
   const [dialog, setDialog] = useState("");
   const [showDialog, setShowDialog] = useState(false);
 
+  console.log(price);
+
   useEffect(() => {
     if (productDetails) {
       setProductName(productDetails.productName || '');

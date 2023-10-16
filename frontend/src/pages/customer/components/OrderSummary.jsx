@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import { Box, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getProductDetails } from '../../../redux/userHandle';
+import { fetchProductDetailsFromCart } from '../../../redux/userSlice';
 
 const OrderSummary = ({ handleNext, handleBack }) => {
 
@@ -16,11 +16,11 @@ const OrderSummary = ({ handleNext, handleBack }) => {
     const params = useParams();
     const productID = params.id;
 
-    const { currentUser, productDetails } = useSelector((state) => state.user);
+    const { currentUser, productDetailsCart } = useSelector((state) => state.user);
 
     React.useEffect(() => {
         if (productID) {
-            dispatch(getProductDetails(productID));
+            dispatch(fetchProductDetailsFromCart(productID));
         }
     }, [productID, dispatch]);
 
@@ -40,15 +40,15 @@ const OrderSummary = ({ handleNext, handleBack }) => {
                 <React.Fragment>
                     <List disablePadding>
                         <ListItem sx={{ py: 1, px: 0 }}>
-                            <ListItemText primary={productDetails.productName} secondary={`Quantity: ${productDetails.quantity}`} />
+                            <ListItemText primary={productDetailsCart.productName} secondary={`Quantity: ${productDetailsCart.quantity}`} />
                             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                                {`₹${productDetails.price && productDetails.price.mrp * productDetails.quantity}`}
+                                {`₹${productDetailsCart.price && productDetailsCart.price.mrp * productDetailsCart.quantity}`}
                             </Typography>
                         </ListItem>
                         <ListItem sx={{ py: 1, px: 0 }}>
                             <ListItemText primary="Discount" />
                             <Typography variant="subtitle1" sx={{ color: "green" }}>
-                                ₹{productDetails.price && productDetails.price.mrp - productDetails.price.cost}
+                                ₹{productDetailsCart.price && productDetailsCart.price.mrp - productDetailsCart.price.cost}
                             </Typography>
                         </ListItem>
                         <ListItem sx={{ py: 1, px: 0 }}>
@@ -60,7 +60,7 @@ const OrderSummary = ({ handleNext, handleBack }) => {
                         <ListItem sx={{ py: 1, px: 0 }}>
                             <ListItemText primary="Total Amount" />
                             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                                ₹{productDetails.price && productDetails.price.cost * productDetails.quantity}
+                                ₹{productDetailsCart.price && productDetailsCart.price.cost * productDetailsCart.quantity}
                             </Typography>
                         </ListItem>
                     </List>

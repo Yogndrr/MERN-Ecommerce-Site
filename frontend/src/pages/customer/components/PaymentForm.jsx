@@ -4,16 +4,17 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { Box, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addStuff, getProductDetails } from '../../../redux/userHandle';
+import { addStuff } from '../../../redux/userHandle';
 import { useNavigate, useParams } from 'react-router-dom';
 import Popup from '../../../components/Popup';
+import { fetchProductDetailsFromCart, removeAllFromCart, removeSpecificProduct } from '../../../redux/userSlice';
 
 const PaymentForm = ({ handleBack }) => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const { status, currentUser, productDetails } = useSelector(state => state.user);
+    const { status, currentUser, productDetailsCart } = useSelector(state => state.user);
 
     const params = useParams();
     const productID = params.id;
@@ -38,15 +39,15 @@ const PaymentForm = ({ handleBack }) => {
 
     useEffect(() => {
         if (productID) {
-            dispatch(getProductDetails(productID));
+            dispatch(fetchProductDetailsFromCart(productID));
         }
     }, [productID, dispatch]);
 
     const productsQuantity = currentUser.cartDetails.reduce((total, item) => total + item.quantity, 0);
     const totalPrice = currentUser.cartDetails.reduce((total, item) => total + (item.quantity * item.price.cost), 0);
 
-    const singleProductQuantity = productDetails && productDetails.quantity
-    const totalsingleProductPrice = productDetails && productDetails.price && productDetails.price.cost * productDetails.quantity
+    const singleProductQuantity = productDetailsCart && productDetailsCart.quantity
+    const totalsingleProductPrice = productDetailsCart && productDetailsCart.price && productDetailsCart.price.cost * productDetailsCart.quantity
 
     const paymentID = `${paymentData.cardNumber.slice(-4)}-${paymentData.expDate.slice(0, 2)}${paymentData.expDate.slice(-2)}-${Date.now()}`;
     const paymentInfo = { id: paymentID, status: "Successful" }
@@ -63,7 +64,7 @@ const PaymentForm = ({ handleBack }) => {
     const singleOrderData = {
         buyer: currentUser._id,
         shippingData: currentUser.shippingData,
-        orderedProducts: productDetails,
+        orderedProducts: productDetailsCart,
         paymentInfo,
         productsQuantity: singleProductQuantity,
         totalPrice: totalsingleProductPrice,
@@ -73,9 +74,11 @@ const PaymentForm = ({ handleBack }) => {
         e.preventDefault()
         if (productID) {
             dispatch(addStuff("newOrder", singleOrderData));
+            dispatch(removeSpecificProduct(productID));
         }
         else {
             dispatch(addStuff("newOrder", multiOrderData));
+            dispatch(removeAllFromCart());
         }
     };
 

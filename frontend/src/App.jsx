@@ -15,6 +15,7 @@ import Profile from './pages/customer/pages/Profile';
 import Logout from './pages/Logout';
 import { isTokenValid } from './redux/userSlice';
 import CheckoutAftermath from './pages/customer/pages/CheckoutAftermath';
+import ViewOrder from './pages/customer/pages/ViewOrder';
 
 const App = () => {
 
@@ -78,6 +79,7 @@ const App = () => {
 
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Orders" element={<CustomerOrders />} />
+            <Route path="/order/view/:id" element={<ViewOrder />} />
             <Route path="/Logout" element={<Logout />} />
           </Routes>
         </>

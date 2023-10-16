@@ -107,8 +107,11 @@ const Image = styled('img')({
 
 const Text = styled(Typography)`
     font-size: 14px;
-    margin-top: 5px
-`
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
 
 const TextContainer = styled(Container)`
     display: flex;

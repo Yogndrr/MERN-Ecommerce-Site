@@ -31,7 +31,12 @@ const {
     cartUpdate
 } = require('../controllers/customerController.js');
 
-const { newOrder } = require('../controllers/orderController.js');
+const {
+    newOrder,
+    getOrderedProductsByCustomer,
+    getOrderedProductsBySeller
+} = require('../controllers/orderController.js');
+
 
 // Seller
 router.post('/SellerRegister', sellerRegister);
@@ -65,5 +70,7 @@ router.put('/CustomerUpdate/:id', cartUpdate);
 
 // Order
 router.post('/newOrder', newOrder);
+router.get('/getOrderedProductsByCustomer/:id', getOrderedProductsByCustomer);
+router.get('/getOrderedProductsBySeller/:id', getOrderedProductsBySeller);
 
 module.exports = router;

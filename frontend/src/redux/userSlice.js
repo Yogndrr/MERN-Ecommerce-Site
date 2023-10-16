@@ -23,6 +23,7 @@ const initialState = {
     sellerProductData: [],
     specificProductData: [],
     productDetails: {},
+    productDetailsCart: {},
     filteredProducts: [],
     customersList: [],
 };
@@ -116,6 +117,30 @@ const userSlice = createSlice({
 
             updateCartDetailsInLocalStorage(state.currentUser.cartDetails);
         },
+
+        removeSpecificProduct: (state, action) => {
+            const productIdToRemove = action.payload;
+            const updatedCartDetails = state.currentUser.cartDetails.filter(
+                (cartItem) => cartItem._id !== productIdToRemove
+            );
+
+            state.currentUser.cartDetails = updatedCartDetails;
+            updateCartDetailsInLocalStorage(updatedCartDetails);
+        },
+
+        fetchProductDetailsFromCart: (state, action) => {
+            const productIdToFetch = action.payload;
+            const productInCart = state.currentUser.cartDetails.find(
+                (cartItem) => cartItem._id === productIdToFetch
+            );
+
+            if (productInCart) {
+                state.productDetailsCart = { ...productInCart };
+            } else {
+                state.productDetailsCart = null;
+            }
+        },
+
         removeAllFromCart: (state) => {
             state.currentUser.cartDetails = [];
             updateCartDetailsInLocalStorage([]);
@@ -286,7 +311,9 @@ export const {
 
     addToCart,
     removeFromCart,
+    removeSpecificProduct,
     removeAllFromCart,
+    fetchProductDetailsFromCart,
     updateCurrentUser,
 } = userSlice.actions;
 

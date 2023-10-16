@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../redux/userSlice';
-import styled from 'styled-components';
-import { BasicButton } from '../utils/buttonStyles';
-import { getProductDetails, updateStuff } from '../redux/userHandle';
-import { Avatar, Card, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import { generateRandomColor, timeAgo } from '../utils/helperFunctions';
+import { Avatar, Box, Card, IconButton, Menu, MenuItem, Rating, TextField, Typography } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
+import { addToCart, underControl } from '../../../redux/userSlice';
+import { BasicButton, GreenButton } from '../../../utils/buttonStyles';
+import { getProductDetails, updateStuff } from '../../../redux/userHandle';
+import Popup from '../../../components/Popup';
+import { generateRandomColor, timeAgo } from '../../../utils/helperFunctions';
 
-const ViewProduct = () => {
+const ViewOrder = () => {
     const dispatch = useDispatch();
     const params = useParams();
     const productID = params.id;
 
-
-    const { currentUser, currentRole, productDetails, loading, responseDetails } = useSelector(state => state.user);
+    const { currentUser, currentRole, productDetails, loading, status, error, responseReview, responseDetails } = useSelector(state => state.user);
 
     useEffect(() => {
         dispatch(getProductDetails(productID));
     }, [productID, dispatch]);
 
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+
+    const [message, setMessage] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
 
     const [anchorElMenu, setAnchorElMenu] = useState(null);
 
@@ -32,6 +37,10 @@ const ViewProduct = () => {
         setAnchorElMenu(null);
     };
 
+    const handleRatingChange = (event, newRating) => {
+        setRating(newRating);
+    };
+
     const deleteHandler = (reviewId) => {
         const fields = { reviewId };
 
@@ -39,6 +48,33 @@ const ViewProduct = () => {
     };
 
     const reviewer = currentUser && currentUser._id
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        if (rating === 0) {
+            setMessage("Please select a rating.");
+            setShowPopup(true);
+        } else {
+            const fields = { rating, comment, reviewer };
+            dispatch(updateStuff(fields, productID, "addReview"));
+            setRating(0);
+            setComment('');
+        }
+    };
+
+    useEffect(() => {
+        if (status === "updated") {
+            dispatch(getProductDetails(productID));
+            dispatch(underControl());
+        } else if (responseReview) {
+            setMessage("You have already submitted a review for this product.");
+            setShowPopup(true);
+        } else if (error) {
+            setMessage("Network Error");
+            setShowPopup(true);
+        }
+    }, [dispatch, responseReview, productID, status, error]);
 
     return (
         <>
@@ -78,6 +114,33 @@ const ViewProduct = () => {
                                                 Add to Cart
                                             </BasicButton>
                                         </ButtonContainer>
+
+                                        <form onSubmit={handleSubmit}>
+                                            <ReviewWritingContainer>
+                                                <Box>
+                                                    <Rating
+                                                        name="rating"
+                                                        value={rating}
+                                                        onChange={handleRatingChange}
+                                                        size="large"
+                                                    />
+                                                </Box>
+                                                <TextField
+                                                    label="Write a Review"
+                                                    variant="standard"
+                                                    multiline
+                                                    value={comment}
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    sx={{ width: "90%" }}
+                                                    required
+                                                />
+                                                <Box sx={{ textAlign: 'right', width: '90%' }}>
+                                                    <GreenButton type="submit">
+                                                        Submit
+                                                    </GreenButton>
+                                                </Box>
+                                            </ReviewWritingContainer>
+                                        </form>
                                     </>
                                 }
                                 <ReviewWritingContainer>
@@ -152,11 +215,12 @@ const ViewProduct = () => {
                     }
                 </>
             }
+            <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
         </>
     );
 };
 
-export default ViewProduct;
+export default ViewOrder;
 
 const ProductContainer = styled.div`
     display: flex;
