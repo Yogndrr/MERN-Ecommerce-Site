@@ -11,7 +11,7 @@ import Popup from '../components/Popup';
 
 const AuthenticationPage = ({ mode, role }) => {
 
-    const bgpic = "https://img.freepik.com/free-vector/gradient-minimalist-background_23-2149976758.jpg?w=1060&t=st=1697182294~exp=1697182894~hmac=8f7c0475651a88880e5056dea6ab4e5f1da237fd53c093a90bdbc2578dd27693"
+    const bgpic = "https://images.pexels.com/photos/1121097/pexels-photo-1121097.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -160,7 +160,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                     label="Create your shop name"
                                     name="shopName"
                                     autoComplete="off"
-                                    variant="standard" 
+                                    variant="standard"
                                     error={shopNameError}
                                     helperText={shopNameError && 'Shop name is required'}
                                     onChange={handleInputChange}
@@ -174,7 +174,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                 label="Enter your email"
                                 name="email"
                                 autoComplete="email"
-                                variant="standard" 
+                                variant="standard"
                                 error={emailError}
                                 helperText={emailError && 'Email is required'}
                                 onChange={handleInputChange}
@@ -188,7 +188,7 @@ const AuthenticationPage = ({ mode, role }) => {
                                 type={toggle ? 'text' : 'password'}
                                 id="password"
                                 autoComplete="current-password"
-                                variant="standard" 
+                                variant="standard"
                                 error={passwordError}
                                 helperText={passwordError && 'Password is required'}
                                 onChange={handleInputChange}
