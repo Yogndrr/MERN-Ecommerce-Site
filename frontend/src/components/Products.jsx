@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid } from '@mui/material';
+import { Container, Grid, Pagination } from '@mui/material';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/userSlice';
@@ -12,11 +12,16 @@ const Products = ({ productData }) => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const itemsPerPage = 9;
 
   const { currentRole, responseSearch } = useSelector(state => state.user);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState("");
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = productData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleAddToCart = (event, product) => {
     event.stopPropagation();
@@ -35,6 +40,9 @@ const Products = ({ productData }) => {
     setShowPopup(true)
   };
 
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   if (responseSearch) {
     return <div>Product not found</div>;
@@ -43,7 +51,7 @@ const Products = ({ productData }) => {
   return (
     <>
       <ProductGrid container spacing={3}>
-        {productData.map((data, index) => (
+        {currentItems.map((data, index) => (
           <Grid item xs={12} sm={6} md={4}
             key={index}
             onClick={() => navigate("/product/view/" + data._id)}
@@ -89,6 +97,16 @@ const Products = ({ productData }) => {
           </Grid>
         ))}
       </ProductGrid>
+
+      <Container sx={{ mt: 10, mb: 10, display: "flex", justifyContent: 'center', alignItems: "center" }}>
+        <Pagination
+          count={Math.ceil(productData.length / itemsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="secondary"
+        />
+      </Container>
+
       <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
     </>
   )

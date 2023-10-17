@@ -40,7 +40,7 @@ const Slide = ({ products, title }) => {
                         <Link key={index} to={`/product/view/${product._id}`} style={{ textDecoration: 'none' }}>
                             <Box textAlign="center" style={{ padding: '25px 15px' }}>
                                 <Image src={product.productImage} />
-                                <Text style={{ fontWeight: 600, color: '#212121' }}>{product.productName}</Text>
+                                <TitleText style={{ fontWeight: 600, color: '#212121' }}>{product.productName}</TitleText>
                                 <TextContainer>
                                     <Text style={{ color: '#525050', textDecoration: "line-through" }}>{product.price.mrp}</Text>
                                     <Text>₹{product.price.cost}</Text>
@@ -105,13 +105,18 @@ const Image = styled('img')({
     height: 150
 })
 
-const Text = styled(Typography)`
+const TitleText = styled(Typography)`
     font-size: 14px;
     margin-top: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 `;
+
+const Text = styled(Typography)`
+    font-size: 14px;
+    margin-top: 5px
+`
 
 const TextContainer = styled(Container)`
     display: flex;

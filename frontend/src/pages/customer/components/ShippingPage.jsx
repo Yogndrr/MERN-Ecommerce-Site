@@ -17,6 +17,8 @@ const ShippingPage = ({ handleNext, profile }) => {
 
   let shippingData = currentUser.shippingData;
 
+  console.log(shippingData);
+
   const [formData, setFormData] = useState({
     address: '',
     city: '',
@@ -149,7 +151,7 @@ const ShippingPage = ({ handleNext, profile }) => {
   return (
     <React.Fragment>
       {
-        shippingData ?
+        shippingData && Object.keys(shippingData).length > 0 ? 
           <React.Fragment>
             <StyledTypography variant="h6">
               Address : {shippingData && shippingData.address}
