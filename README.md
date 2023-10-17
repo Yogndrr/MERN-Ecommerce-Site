@@ -1,49 +1,57 @@
 <h1 align="center">
-    SCHOOL MANAGEMENT SYSTEM
+    SHOPCART: Ecommerce Site
 </h1>
 
 <h3 align="center">
-Streamline school management, class organization, and add students and faculty.<br>
-Seamlessly track attendance, assess performance, and provide feedback. <br>
-Access records, view marks, and communicate effortlessly.
+Seamless shopping, search and explore different product categories, add products to cart, and checkout swiftly. <br>
+Become a seller and add products, monitor sales, and gather customer feedback.
 </h3>
 
 <br>
 
+[Youtube Video](https://youtu.be/ol650KwQkgY?si=rKcboqSv3n-e4UbC)
+<br><br>
+[LinkedIn](https://www.linkedin.com/in/yogndr/)
+
 # About
 
-The School Management System is a web-based application built using the MERN (MongoDB, Express.js, React.js, Node.js) stack. It aims to streamline school management, class organization, and facilitate communication between students, teachers, and administrators.
+ShopCart is an ecommerce site developed using the MERN (MongoDB, Express.js, React, Node.js) stack. It offers a user-friendly and efficient shopping experience for customers, while providing sellers with essential tools to manage their products and sales.
 
 ## Features
 
-- **User Roles:** The system supports three user roles: Admin, Teacher, and Student. Each role has specific functionalities and access levels.
+- **User Registration:** ShopCart allows users to register as customers or sellers, enabling a tailored shopping experience.
 
-- **Admin Dashboard:** Administrators can add new students and teachers, create classes and subjects, manage user accounts, and oversee system settings.
+- **Cart System:** Customers can add products to their cart for easy checkout. The cart allows them to review and manage their selections before completing the purchase.
 
-- **Attendance Tracking:** Teachers can easily take attendance for their classes, mark students as present or absent, and generate attendance reports.
+- **Product Search:** ShopCart offers a search functionality where customers can find products by name or browse through categories such as Electronics, Clothes, Kitchen, and more.
 
-- **Performance Assessment:** Teachers can assess students' performance by providing marks and feedback. Students can view their marks and track their progress over time.
+- **Reviews and Ratings:** Customers can leave reviews and ratings (out of 5) for products they've purchased, providing valuable feedback for sellers and building trust within the community.
 
-- **Data Visualization:** Students can visualize their performance data through interactive charts and tables, helping them understand their academic performance at a glance.
+- **Seller Dashboard:** Sellers have access to a dedicated dashboard where they can manage their products, view sales data, and gain insights into their store's performance through data visualization.
 
-- **Communication:** Users can communicate effortlessly through the system. Teachers can send messages to students and vice versa, promoting effective communication and collaboration.
+- **Product Management:** Sellers can add products with detailed information and set their prices. They can also check which customers have added their products to their carts.
+
+- **Order Tracking:** Sellers can monitor the products ordered by customers, helping them stay organized and fulfill orders efficiently.
 
 ## Technologies Used
 
-- Frontend: React.js, Material UI, Redux
-- Backend: Node.js, Express.js
+- Frontend: React.js, Material UI, Redux Toolkit, Styled Components
+- Backend: Node.js, Express.js, JWT Token
 - Database: MongoDB
+- Data Visualization: React Apexcharts
 
 <br>
 
 # Installation
 
 ```sh
-git clone https://github.com/Yogndrr/MERN-School-Management-System.git
+git clone https://github.com/Yogndrr/MERN-Ecommerce-Site.git
 ```
 Open 2 terminals in separate windows/tabs.
 
 Terminal 1: Setting Up Backend 
+<br><br>
+Create a env file and then add your mongodb link and also jwt secret key
 ```sh
 cd backend
 npm install
@@ -51,11 +59,18 @@ npm start
 ```
 
 Terminal 2: Setting Up Frontend
+
 ```sh
 cd frontend
 npm install
 npm start
 ```
+Create a env file and then write 
+
+```env
+REACT_APP_BASE_URL = http://localhost:5000
+```
+
 Now, navigate to `localhost:3000` in your browser. 
 The Backend API will be running at `localhost:5000`.
 
@@ -63,5 +78,5 @@ The Backend API will be running at `localhost:5000`.
 
 # Deployment
 * Render - server side
-* Netlify - client side
+* Vercel - client side
 
