@@ -9,7 +9,7 @@ Become a seller and add products, monitor sales, and gather customer feedback.
 
 <br>
 
-[Youtube Video](https://youtu.be/ol650KwQkgY?si=rKcboqSv3n-e4UbC)
+[Youtube Video](https://youtu.be/i_z0HYk3IuQ?si=S04-IBq7Ny8k0FYC)
 <br><br>
 [LinkedIn](https://www.linkedin.com/in/yogndr/)
 
